@@ -1,0 +1,18 @@
+{
+  "question": "Has Northwind Robotics completed its acquisition of Helios Sensors, and which approvals were still pending?",
+  "event_hint": null,
+  "cutoff": "2024-06-30T23:59:59Z",
+  "temporal_mode": "as_of",
+  "seed_url": null,
+  "report_language": "en",
+  "budget_preset": "medium",
+  "budget": null,
+  "mechanisms": {
+    "source_verification": true,
+    "temporal_planning": true
+  },
+  "search_mode": "live",
+  "snapshot_id": null,
+  "model_profile": null,
+  "tags": []
+}

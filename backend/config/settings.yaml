@@ -1,0 +1,56 @@
+model_profiles:
+  # 研究所用模型：火山方舟 DeepSeek（OpenAI 兼容），四个角色共用一个模型
+  - id: ark-flash
+    label: DeepSeek V4.1 Flash (Volcengine Ark)
+    base_url_env: LLM_BASE_URL
+    api_key_env: LLM_API_KEY
+    roles: {controller: deepseek-v4.1-flash, extractor: deepseek-v4.1-flash, writer: deepseek-v4.1-flash, reviewer: deepseek-v4.1-flash}
+    structured_output: tool
+    extra_body: {thinking: {type: disabled}}
+    role_output: {writer: native}
+  # 研究所用模型（默认）：OpenAI 兼容服务，与评委共用端点但为不同模型，四个角色共用一个模型
+  - id: minimax-m3
+    label: MiniMax-M3
+    base_url_env: JUDGE_BASE_URL
+    api_key_env: JUDGE_API_KEY
+    roles: {controller: MiniMax-M3, extractor: MiniMax-M3, writer: MiniMax-M3, reviewer: MiniMax-M3}
+    structured_output: prompted  # tool 模式下常漏调工具、参数混入 XML 标签
+    extra_body: {thinking: {type: disabled}}
+  # 评分专用模型：与生成模型分离，避免自评偏差
+  - id: judge
+    label: GLM-5.3-Flash (judge)
+    base_url_env: JUDGE_BASE_URL
+    api_key_env: JUDGE_API_KEY
+    roles: {controller: glm-5.3-flash, extractor: glm-5.3-flash, writer: glm-5.3-flash, reviewer: glm-5.3-flash}
+    structured_output: tool
+default_model_profile: minimax-m3
+# 成本仅用于预算上限与"等价成本"统计（方舟套餐按订阅计费）：
+# - deepseek-v4.1-flash：DeepSeek 官方高峰价 2 / 8 元每百万 token，按 7.1 汇率折算
+# - glm-5.3-flash：Z.ai 官方列表价
+# - MiniMax-M3：MiniMax 公开报道的按量价（≤512K 上下文），实际计费以服务方为准
+prices_usd_per_mtok:
+  deepseek-v4.1-flash: {input: 0.28, output: 1.13}
+  glm-5.3-flash: {input: 0.15, output: 0.50}
+  MiniMax-M3: {input: 0.30, output: 1.20}
+budget_presets:
+  small: {max_research_rounds: 3, max_review_rounds: 1, max_tool_calls: 30, max_llm_tokens: 300000, max_seconds: 900, max_cost_usd: 0.30, reserve_ratio: 0.25}
+  medium: {max_research_rounds: 5, max_review_rounds: 2, max_tool_calls: 60, max_llm_tokens: 800000, max_seconds: 1800, max_cost_usd: 0.80, reserve_ratio: 0.25}
+  large: {max_research_rounds: 8, max_review_rounds: 3, max_tool_calls: 120, max_llm_tokens: 2000000, max_seconds: 3600, max_cost_usd: 2.00, reserve_ratio: 0.20}
+stopping:
+  core_coverage_threshold: 0.8
+  no_progress_rounds_limit: 2
+  min_round_budget_ratio: 0.08
+research:
+  default_lookback_days: 3650  # base 条件（无时间规划）的检索窗口 [cutoff - N, cutoff]，即只受截止时间约束
+  max_actions_per_round: 6
+  search_results_per_query: 8
+  max_reads_per_round: 10
+  action_concurrency: 4
+  news_order: [tavily, exa]
+  verification_order: [exa, tavily]
+defaults:
+  temporal_mode: as_of
+  report_language: en
+  budget_preset: medium
+  mechanisms: {source_verification: true, temporal_planning: true}
+  search_mode: live

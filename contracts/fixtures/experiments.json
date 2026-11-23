@@ -1,0 +1,46 @@
+[
+  {
+    "id": "exp_main",
+    "name": "2×2 mechanism ablation — test split",
+    "created_at": "2026-11-18T02:00:00Z",
+    "status": "completed",
+    "benchmarks": [
+      "open_tls",
+      "deepresearch_bench",
+      "browsecomp_plus",
+      "manual"
+    ],
+    "conditions": [
+      "base",
+      "source",
+      "temporal",
+      "full"
+    ],
+    "model_profile": "default",
+    "budget_preset": "medium",
+    "repeats": 3,
+    "task_count": 86,
+    "notes": "MOCK DATA for UI development. DeepResearch Bench uses a substitute judge (not leaderboard-comparable); subset of 12 current-events tasks."
+  },
+  {
+    "id": "exp_pilot",
+    "name": "Pilot — 5 dev tasks per benchmark",
+    "created_at": "2026-11-12T08:30:00Z",
+    "status": "completed",
+    "benchmarks": [
+      "open_tls",
+      "manual"
+    ],
+    "conditions": [
+      "base",
+      "source",
+      "temporal",
+      "full"
+    ],
+    "model_profile": "default",
+    "budget_preset": "small",
+    "repeats": 1,
+    "task_count": 10,
+    "notes": "MOCK DATA. Used to estimate runtime and cost before freezing budget caps."
+  }
+]

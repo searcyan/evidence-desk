@@ -1,0 +1,3535 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "ActionStatus": {
+      "enum": [
+        "planned",
+        "running",
+        "done",
+        "skipped",
+        "failed"
+      ],
+      "type": "string"
+    },
+    "ActionType": {
+      "enum": [
+        "search",
+        "read",
+        "expand_window",
+        "narrow_window",
+        "focus_date",
+        "trace_origin",
+        "corroborate"
+      ],
+      "type": "string"
+    },
+    "AppConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "budget_presets": {
+          "additionalProperties": false,
+          "properties": {
+            "large": {
+              "$ref": "#/definitions/BudgetLimits"
+            },
+            "medium": {
+              "$ref": "#/definitions/BudgetLimits"
+            },
+            "small": {
+              "$ref": "#/definitions/BudgetLimits"
+            }
+          },
+          "required": [
+            "small",
+            "medium",
+            "large"
+          ],
+          "type": "object"
+        },
+        "default_model_profile": {
+          "type": "string"
+        },
+        "defaults": {
+          "additionalProperties": false,
+          "properties": {
+            "budget_preset": {
+              "$ref": "#/definitions/BudgetPreset"
+            },
+            "mechanisms": {
+              "$ref": "#/definitions/Mechanisms"
+            },
+            "report_language": {
+              "$ref": "#/definitions/Lang"
+            },
+            "search_mode": {
+              "$ref": "#/definitions/SearchMode"
+            },
+            "temporal_mode": {
+              "$ref": "#/definitions/TemporalMode"
+            }
+          },
+          "required": [
+            "temporal_mode",
+            "report_language",
+            "budget_preset",
+            "mechanisms",
+            "search_mode"
+          ],
+          "type": "object"
+        },
+        "mode": {
+          "description": "mock 表示前端连的是 mock 后端",
+          "enum": [
+            "live",
+            "mock"
+          ],
+          "type": "string"
+        },
+        "model_profiles": {
+          "items": {
+            "$ref": "#/definitions/ModelProfile"
+          },
+          "type": "array"
+        },
+        "search_providers": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "available": {
+                "type": "boolean"
+              },
+              "id": {
+                "enum": [
+                  "tavily",
+                  "exa",
+                  "corpus"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "available"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "snapshots": {
+          "items": {
+            "$ref": "#/definitions/SnapshotInfo"
+          },
+          "type": "array"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "mode",
+        "version",
+        "model_profiles",
+        "default_model_profile",
+        "search_providers",
+        "snapshots",
+        "budget_presets",
+        "defaults"
+      ],
+      "type": "object"
+    },
+    "BenchmarkId": {
+      "enum": [
+        "open_tls",
+        "deepresearch_bench",
+        "browsecomp_plus",
+        "manual"
+      ],
+      "type": "string"
+    },
+    "BudgetLevelPoint": {
+      "additionalProperties": false,
+      "description": "预算档位扫描点，用于质量-成本权衡曲线",
+      "properties": {
+        "benchmark": {
+          "$ref": "#/definitions/BenchmarkId"
+        },
+        "budget_preset": {
+          "enum": [
+            "small",
+            "medium",
+            "large"
+          ],
+          "type": "string"
+        },
+        "condition": {
+          "$ref": "#/definitions/ConditionId"
+        },
+        "mean_cost_usd": {
+          "type": "number"
+        },
+        "metric_id": {
+          "type": "string"
+        },
+        "metric_mean": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "benchmark",
+        "condition",
+        "budget_preset",
+        "metric_id",
+        "metric_mean",
+        "mean_cost_usd"
+      ],
+      "type": "object"
+    },
+    "BudgetLimits": {
+      "additionalProperties": false,
+      "description": "预算上限。两个循环共享同一份预算，回到前面步骤不重置计数",
+      "properties": {
+        "max_cost_usd": {
+          "description": "美元成本上限，null 表示不限制",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "max_llm_tokens": {
+          "description": "LLM 输入+输出 token 总数",
+          "type": "number"
+        },
+        "max_research_rounds": {
+          "type": "number"
+        },
+        "max_review_rounds": {
+          "type": "number"
+        },
+        "max_seconds": {
+          "type": "number"
+        },
+        "max_tool_calls": {
+          "description": "search + read 工具调用总数",
+          "type": "number"
+        },
+        "reserve_ratio": {
+          "description": "为写报告与审查预留的预算比例（0~1），研究循环不得占用",
+          "type": "number"
+        }
+      },
+      "required": [
+        "max_research_rounds",
+        "max_review_rounds",
+        "max_tool_calls",
+        "max_llm_tokens",
+        "max_seconds",
+        "max_cost_usd",
+        "reserve_ratio"
+      ],
+      "type": "object"
+    },
+    "BudgetPreset": {
+      "enum": [
+        "small",
+        "medium",
+        "large",
+        "custom"
+      ],
+      "type": "string"
+    },
+    "BudgetUsage": {
+      "additionalProperties": false,
+      "properties": {
+        "cost_usd": {
+          "type": "number"
+        },
+        "elapsed_seconds": {
+          "type": "number"
+        },
+        "input_tokens": {
+          "type": "number"
+        },
+        "llm_calls": {
+          "type": "number"
+        },
+        "output_tokens": {
+          "type": "number"
+        },
+        "read_calls": {
+          "type": "number"
+        },
+        "research_rounds": {
+          "type": "number"
+        },
+        "review_rounds": {
+          "type": "number"
+        },
+        "search_calls": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "research_rounds",
+        "review_rounds",
+        "search_calls",
+        "read_calls",
+        "llm_calls",
+        "input_tokens",
+        "output_tokens",
+        "cost_usd",
+        "elapsed_seconds"
+      ],
+      "type": "object"
+    },
+    "Claim": {
+      "additionalProperties": false,
+      "properties": {
+        "applicable_at_cutoff": {
+          "description": "截止时间时是否成立/可知；null 为无法判断",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "event_date": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/DateRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "first_round": {
+          "type": "number"
+        },
+        "history": {
+          "description": "判定修订历史（不含当前），按时间先后",
+          "items": {
+            "$ref": "#/definitions/VerdictRevision"
+          },
+          "type": "array"
+        },
+        "id": {
+          "type": "string"
+        },
+        "independent_sources": {
+          "description": "支持该声明的独立来源组数量",
+          "type": "number"
+        },
+        "links": {
+          "items": {
+            "$ref": "#/definitions/ClaimEvidenceLink"
+          },
+          "type": "array"
+        },
+        "question_ids": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "rationale": {
+          "type": "string"
+        },
+        "stage": {
+          "description": "对应 TaskSpec.stage_model 中的阶段，无则 null",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "subject": {
+          "type": "string"
+        },
+        "text": {
+          "description": "原子声明，使用报告语言",
+          "type": "string"
+        },
+        "updated_round": {
+          "type": "number"
+        },
+        "verdict": {
+          "$ref": "#/definitions/Verdict"
+        }
+      },
+      "required": [
+        "id",
+        "text",
+        "subject",
+        "stage",
+        "event_date",
+        "question_ids",
+        "verdict",
+        "rationale",
+        "links",
+        "independent_sources",
+        "applicable_at_cutoff",
+        "history",
+        "first_round",
+        "updated_round"
+      ],
+      "type": "object"
+    },
+    "ClaimEvidenceLink": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_id": {
+          "type": "string"
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "relation": {
+          "enum": [
+            "supports",
+            "contradicts",
+            "context"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "relation",
+        "note"
+      ],
+      "type": "object"
+    },
+    "ClarificationAnswer": {
+      "additionalProperties": false,
+      "properties": {
+        "answers": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "answer": {
+                "type": "string"
+              },
+              "question_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "question_id",
+              "answer"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "answers"
+      ],
+      "type": "object"
+    },
+    "ClarificationQuestion": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "options": {
+          "description": "可选的候选答案，前端渲染为可点选项；用户也可自由输入",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "text",
+        "options"
+      ],
+      "type": "object"
+    },
+    "ClarificationRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "asked_at": {
+          "$ref": "#/definitions/ISODateTime"
+        },
+        "id": {
+          "type": "string"
+        },
+        "questions": {
+          "items": {
+            "$ref": "#/definitions/ClarificationQuestion"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "questions",
+        "asked_at"
+      ],
+      "type": "object"
+    },
+    "ConditionId": {
+      "description": "2×2 条件：base 基础工作流；source 仅来源机制；temporal 仅时间机制；full 两者都开",
+      "enum": [
+        "base",
+        "source",
+        "temporal",
+        "full"
+      ],
+      "type": "string"
+    },
+    "ConditionResult": {
+      "additionalProperties": false,
+      "properties": {
+        "benchmark": {
+          "$ref": "#/definitions/BenchmarkId"
+        },
+        "completion": {
+          "additionalProperties": false,
+          "properties": {
+            "completed": {
+              "type": "number"
+            },
+            "failed": {
+              "type": "number"
+            },
+            "partial": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "completed",
+            "partial",
+            "failed"
+          ],
+          "type": "object"
+        },
+        "condition": {
+          "$ref": "#/definitions/ConditionId"
+        },
+        "cost": {
+          "$ref": "#/definitions/CostStat"
+        },
+        "metrics": {
+          "additionalProperties": {
+            "$ref": "#/definitions/MetricStat"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "benchmark",
+        "condition",
+        "metrics",
+        "cost",
+        "completion"
+      ],
+      "type": "object"
+    },
+    "CostStat": {
+      "additionalProperties": false,
+      "properties": {
+        "grading_cost_usd": {
+          "description": "评分（LLM judge）成本，与生成成本分开",
+          "type": "number"
+        },
+        "mean_cost_usd": {
+          "type": "number"
+        },
+        "mean_seconds": {
+          "type": "number"
+        },
+        "mean_tokens": {
+          "type": "number"
+        },
+        "mean_tool_calls": {
+          "type": "number"
+        },
+        "total_cost_usd": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "mean_cost_usd",
+        "mean_tokens",
+        "mean_seconds",
+        "mean_tool_calls",
+        "total_cost_usd",
+        "grading_cost_usd"
+      ],
+      "type": "object"
+    },
+    "DateRef": {
+      "additionalProperties": false,
+      "description": "日期引用：新闻里的事件日期经常只精确到月或年",
+      "properties": {
+        "end": {
+          "$ref": "#/definitions/ISODate"
+        },
+        "precision": {
+          "enum": [
+            "day",
+            "month",
+            "year",
+            "range"
+          ],
+          "type": "string"
+        },
+        "start": {
+          "$ref": "#/definitions/ISODate"
+        },
+        "text": {
+          "description": "原文中的日期表述，如 \"late March 2024\"",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "start",
+        "end",
+        "precision",
+        "text"
+      ],
+      "type": "object"
+    },
+    "Decision": {
+      "additionalProperties": false,
+      "properties": {
+        "at": {
+          "$ref": "#/definitions/ISODateTime"
+        },
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "continue_research",
+            "write_report",
+            "repair_report",
+            "reverify",
+            "finish"
+          ],
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "round": {
+          "type": "number"
+        },
+        "signals": {
+          "$ref": "#/definitions/DecisionSignals"
+        },
+        "stop_reason": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/StopReason"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "round",
+        "reason",
+        "stop_reason",
+        "signals",
+        "at"
+      ],
+      "type": "object"
+    },
+    "DecisionSignals": {
+      "additionalProperties": false,
+      "properties": {
+        "budget_remaining_ratio": {
+          "description": "扣除预留后剩余预算比例 0~1",
+          "type": "number"
+        },
+        "core_coverage": {
+          "description": "core 问题已回答比例 0~1",
+          "type": "number"
+        },
+        "new_independent_evidence": {
+          "description": "上一轮新增的独立证据（新来源组）数",
+          "type": "number"
+        },
+        "new_milestones": {
+          "type": "number"
+        },
+        "no_progress_rounds": {
+          "description": "连续无进展轮数",
+          "type": "number"
+        },
+        "open_high_gaps": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "core_coverage",
+        "open_high_gaps",
+        "new_independent_evidence",
+        "new_milestones",
+        "budget_remaining_ratio",
+        "no_progress_rounds"
+      ],
+      "type": "object"
+    },
+    "EventType": {
+      "enum": [
+        "acquisition",
+        "legal_case",
+        "policy",
+        "disaster",
+        "election",
+        "product",
+        "conflict",
+        "other"
+      ],
+      "type": "string"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "description": "证据：原文段落，逐字引用",
+      "properties": {
+        "document_id": {
+          "type": "string"
+        },
+        "event_date": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/DateRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "quote": {
+          "type": "string"
+        },
+        "round": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "document_id",
+        "quote",
+        "event_date",
+        "round"
+      ],
+      "type": "object"
+    },
+    "ExperimentDetail": {
+      "additionalProperties": false,
+      "properties": {
+        "benchmarks": {
+          "items": {
+            "$ref": "#/definitions/BenchmarkId"
+          },
+          "type": "array"
+        },
+        "budget_levels": {
+          "items": {
+            "$ref": "#/definitions/BudgetLevelPoint"
+          },
+          "type": "array"
+        },
+        "budget_preset": {
+          "$ref": "#/definitions/BudgetPreset"
+        },
+        "conditions": {
+          "items": {
+            "$ref": "#/definitions/ConditionId"
+          },
+          "type": "array"
+        },
+        "created_at": {
+          "$ref": "#/definitions/ISODateTime"
+        },
+        "id": {
+          "type": "string"
+        },
+        "metric_defs": {
+          "items": {
+            "$ref": "#/definitions/MetricDef"
+          },
+          "type": "array"
+        },
+        "model_profile": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "repeats": {
+          "type": "number"
+        },
+        "results": {
+          "items": {
+            "$ref": "#/definitions/ConditionResult"
+          },
+          "type": "array"
+        },
+        "status": {
+          "enum": [
+            "running",
+            "completed",
+            "failed"
+          ],
+          "type": "string"
+        },
+        "task_count": {
+          "type": "number"
+        },
+        "tasks": {
+          "items": {
+            "$ref": "#/definitions/TaskResult"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "benchmarks",
+        "budget_levels",
+        "budget_preset",
+        "conditions",
+        "created_at",
+        "id",
+        "metric_defs",
+        "model_profile",
+        "name",
+        "notes",
+        "repeats",
+        "results",
+        "status",
+        "task_count",
+        "tasks"
+      ],
+      "type": "object"
+    },
+    "ExperimentSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "benchmarks": {
+          "items": {
+            "$ref": "#/definitions/BenchmarkId"
+          },
+          "type": "array"
+        },
+        "budget_preset": {
+          "$ref": "#/definitions/BudgetPreset"
+        },
+        "conditions": {
+          "items": {
+            "$ref": "#/definitions/ConditionId"
+          },
+          "type": "array"
+        },
+        "created_at": {
+          "$ref": "#/definitions/ISODateTime"
+        },
+        "id": {
+          "type": "string"
+        },
+        "model_profile": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "repeats": {
+          "type": "number"
+        },
+        "status": {
+          "enum": [
+            "running",
+            "completed",
+            "failed"
+          ],
+          "type": "string"
+        },
+        "task_count": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "created_at",
+        "status",
+        "benchmarks",
+        "conditions",
+        "model_profile",
+        "budget_preset",
+        "repeats",
+        "task_count",
+        "notes"
+      ],
+      "type": "object"
+    },
+    "Gap": {
+      "additionalProperties": false,
+      "properties": {
+        "affects_main_answer": {
+          "type": "boolean"
+        },
+        "claim_ids": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "closed_round": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "description": {
+          "type": "string"
+        },
+        "feasible": {
+          "description": "是否存在可行的检索路径",
+          "type": "boolean"
+        },
+        "id": {
+          "type": "string"
+        },
+        "opened_round": {
+          "type": "number"
+        },
+        "priority": {
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ],
+          "type": "string"
+        },
+        "question_ids": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "resolution": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "enum": [
+            "open",
+            "in_progress",
+            "resolved",
+            "abandoned"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/definitions/GapType"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "description",
+        "question_ids",
+        "claim_ids",
+        "priority",
+        "affects_main_answer",
+        "feasible",
+        "status",
+        "opened_round",
+        "closed_round",
+        "resolution"
+      ],
+      "type": "object"
+    },
+    "GapType": {
+      "enum": [
+        "missing_background",
+        "missing_phase",
+        "unclear_date",
+        "conflict",
+        "single_source",
+        "unverified_origin",
+        "unanswered_question"
+      ],
+      "type": "string"
+    },
+    "HealthResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "checks": {
+          "additionalProperties": {
+            "additionalProperties": false,
+            "properties": {
+              "detail": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ok": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "ok",
+              "detail"
+            ],
+            "type": "object"
+          },
+          "type": "object"
+        },
+        "status": {
+          "enum": [
+            "ok",
+            "degraded"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "checks"
+      ],
+      "type": "object"
+    },
+    "ISODate": {
+      "description": "YYYY-MM-DD",
+      "type": "string"
+    },
+    "ISODateTime": {
+      "description": "RFC 3339 时间戳，带时区",
+      "type": "string"
+    },
+    "Lang": {
+      "enum": [
+        "en",
+        "zh"
+      ],
+      "type": "string"
+    },
+    "Mechanisms": {
+      "additionalProperties": false,
+      "description": "2×2 实验中的两组机制开关",
+      "properties": {
+        "source_verification": {
+          "description": "来源规划与核实：溯源、转载归并、独立来源计数、trace_origin / corroborate 动作",
+          "type": "boolean"
+        },
+        "temporal_planning": {
+          "description": "时间规划与核实：事件日期抽取、时间适用性检查、expand / narrow / focus_date 动作",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "source_verification",
+        "temporal_planning"
+      ],
+      "type": "object"
+    },
+    "MetricDef": {
+      "additionalProperties": false,
+      "properties": {
+        "benchmark": {
+          "$ref": "#/definitions/BenchmarkId"
+        },
+        "description": {
+          "type": "string"
+        },
+        "higher_is_better": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "primary": {
+          "description": "是否为该 benchmark 的主指标",
+          "type": "boolean"
+        },
+        "unit": {
+          "enum": [
+            "ratio",
+            "score",
+            "count",
+            "usd",
+            "seconds"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "benchmark",
+        "label",
+        "description",
+        "higher_is_better",
+        "unit",
+        "primary"
+      ],
+      "type": "object"
+    },
+    "MetricStat": {
+      "additionalProperties": false,
+      "properties": {
+        "mean": {
+          "type": "number"
+        },
+        "n": {
+          "type": "number"
+        },
+        "std": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "mean",
+        "std",
+        "n"
+      ],
+      "type": "object"
+    },
+    "ModelProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "provider": {
+          "description": "OpenAI 兼容接口的 base_url 主机名，仅用于展示，不含密钥",
+          "type": "string"
+        },
+        "roles": {
+          "additionalProperties": false,
+          "properties": {
+            "controller": {
+              "type": "string"
+            },
+            "extractor": {
+              "type": "string"
+            },
+            "reviewer": {
+              "type": "string"
+            },
+            "writer": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "controller",
+            "extractor",
+            "writer",
+            "reviewer"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "provider",
+        "roles"
+      ],
+      "type": "object"
+    },
+    "ModelRole": {
+      "enum": [
+        "controller",
+        "extractor",
+        "writer",
+        "reviewer"
+      ],
+      "type": "string"
+    },
+    "OriginGroup": {
+      "additionalProperties": false,
+      "description": "来源组：同一原始出处的多篇报道归为一组，只算一个独立来源",
+      "properties": {
+        "document_ids": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "root_document_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "root_document_id",
+        "document_ids",
+        "reason"
+      ],
+      "type": "object"
+    },
+    "Phase": {
+      "description": "工作流 7 个步骤，对应提案 Figure 1",
+      "enum": [
+        "assess",
+        "plan",
+        "collect",
+        "verify",
+        "update",
+        "write",
+        "review"
+      ],
+      "type": "string"
+    },
+    "Report": {
+      "additionalProperties": false,
+      "properties": {
+        "answer": {
+          "$ref": "#/definitions/ReportParagraph",
+          "description": "一段话的直接答案"
+        },
+        "generated_at": {
+          "$ref": "#/definitions/ISODateTime"
+        },
+        "is_partial": {
+          "type": "boolean"
+        },
+        "language": {
+          "$ref": "#/definitions/Lang"
+        },
+        "open_questions": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "sections": {
+          "items": {
+            "$ref": "#/definitions/ReportSection"
+          },
+          "type": "array"
+        },
+        "stop_reason": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/StopReason"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "version": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "version",
+        "language",
+        "title",
+        "generated_at",
+        "is_partial",
+        "answer",
+        "sections",
+        "open_questions",
+        "stop_reason"
+      ],
+      "type": "object"
+    },
+    "ReportParagraph": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "sentences": {
+          "items": {
+            "$ref": "#/definitions/ReportSentence"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "sentences"
+      ],
+      "type": "object"
+    },
+    "ReportSection": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "answer",
+            "background",
+            "timeline_analysis",
+            "analysis",
+            "uncertainty",
+            "other"
+          ],
+          "type": "string"
+        },
+        "paragraphs": {
+          "items": {
+            "$ref": "#/definitions/ReportParagraph"
+          },
+          "type": "array"
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "title",
+        "paragraphs"
+      ],
+      "type": "object"
+    },
+    "ReportSentence": {
+      "additionalProperties": false,
+      "description": "报告以\"句\"为最小单元挂引用，便于逐句核查引用支持度",
+      "properties": {
+        "claim_ids": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "id": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "text",
+        "evidence_ids",
+        "claim_ids"
+      ],
+      "type": "object"
+    },
+    "ResearchAction": {
+      "additionalProperties": false,
+      "properties": {
+        "finished_at": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "gap_id": {
+          "description": "该动作针对的证据缺口；首轮初始检索可为 null",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "params": {
+          "additionalProperties": false,
+          "properties": {
+            "claim_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "date": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ISODate"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "query": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "url": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "window": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/TimeWindow"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "query",
+            "window",
+            "date",
+            "url",
+            "claim_id"
+          ],
+          "type": "object"
+        },
+        "question_ids": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "rationale": {
+          "type": "string"
+        },
+        "result": {
+          "anyOf": [
+            {
+              "additionalProperties": false,
+              "properties": {
+                "documents_added": {
+                  "type": "number"
+                },
+                "duplicates": {
+                  "description": "与已有证据重复（同源转载或内容重复）的文档数，不计入独立进展",
+                  "type": "number"
+                },
+                "evidence_added": {
+                  "type": "number"
+                },
+                "note": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "documents_added",
+                "evidence_added",
+                "duplicates",
+                "note"
+              ],
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "round": {
+          "type": "number"
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "$ref": "#/definitions/ActionStatus"
+        },
+        "type": {
+          "$ref": "#/definitions/ActionType"
+        }
+      },
+      "required": [
+        "id",
+        "round",
+        "type",
+        "status",
+        "gap_id",
+        "question_ids",
+        "rationale",
+        "params",
+        "result",
+        "started_at",
+        "finished_at"
+      ],
+      "type": "object"
+    },
+    "ResearchPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "action_ids": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "created_at": {
+          "$ref": "#/definitions/ISODateTime"
+        },
+        "rationale": {
+          "type": "string"
+        },
+        "round": {
+          "type": "number"
+        },
+        "source_strategy": {
+          "type": "string"
+        },
+        "windows": {
+          "items": {
+            "$ref": "#/definitions/TimeWindow"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "round",
+        "created_at",
+        "rationale",
+        "windows",
+        "source_strategy",
+        "action_ids"
+      ],
+      "type": "object"
+    },
+    "ReviewFinding": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "sentence_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "severity": {
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ],
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "open",
+            "fixed",
+            "wontfix"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "unsupported_citation",
+            "temporal_error",
+            "stage_confusion",
+            "omission",
+            "unavailable_at_cutoff",
+            "other"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "severity",
+        "sentence_id",
+        "description",
+        "status"
+      ],
+      "type": "object"
+    },
+    "ReviewResult": {
+      "additionalProperties": false,
+      "properties": {
+        "at": {
+          "$ref": "#/definitions/ISODateTime"
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/definitions/ReviewFinding"
+          },
+          "type": "array"
+        },
+        "passed": {
+          "type": "boolean"
+        },
+        "round": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "round",
+        "passed",
+        "findings",
+        "at"
+      ],
+      "type": "object"
+    },
+    "RunDetail": {
+      "additionalProperties": false,
+      "description": "运行完整快照。前端先取快照，再从 last_event_seq 之后订阅事件流增量更新",
+      "properties": {
+        "actions": {
+          "items": {
+            "$ref": "#/definitions/ResearchAction"
+          },
+          "type": "array"
+        },
+        "budget": {
+          "$ref": "#/definitions/BudgetLimits"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/definitions/Claim"
+          },
+          "type": "array"
+        },
+        "clarification": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/ClarificationRequest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "counts": {
+          "additionalProperties": false,
+          "properties": {
+            "claims": {
+              "type": "number"
+            },
+            "documents": {
+              "type": "number"
+            },
+            "open_gaps": {
+              "type": "number"
+            },
+            "timeline_entries": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "documents",
+            "claims",
+            "timeline_entries",
+            "open_gaps"
+          ],
+          "type": "object"
+        },
+        "created_at": {
+          "$ref": "#/definitions/ISODateTime"
+        },
+        "decisions": {
+          "items": {
+            "$ref": "#/definitions/Decision"
+          },
+          "type": "array"
+        },
+        "documents": {
+          "items": {
+            "$ref": "#/definitions/SourceDocument"
+          },
+          "type": "array"
+        },
+        "error": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/RunError"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/definitions/Evidence"
+          },
+          "type": "array"
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "gaps": {
+          "items": {
+            "$ref": "#/definitions/Gap"
+          },
+          "type": "array"
+        },
+        "id": {
+          "type": "string"
+        },
+        "last_event_seq": {
+          "type": "number"
+        },
+        "origin_groups": {
+          "items": {
+            "$ref": "#/definitions/OriginGroup"
+          },
+          "type": "array"
+        },
+        "phase": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Phase"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "plans": {
+          "items": {
+            "$ref": "#/definitions/ResearchPlan"
+          },
+          "type": "array"
+        },
+        "report": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Report"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "request": {
+          "$ref": "#/definitions/RunRequest"
+        },
+        "research_round": {
+          "type": "number"
+        },
+        "review_round": {
+          "type": "number"
+        },
+        "reviews": {
+          "items": {
+            "$ref": "#/definitions/ReviewResult"
+          },
+          "type": "array"
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "$ref": "#/definitions/RunStatus"
+        },
+        "stop_reason": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/StopReason"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "task": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/TaskSpec"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "timeline": {
+          "items": {
+            "$ref": "#/definitions/TimelineEntry"
+          },
+          "type": "array"
+        },
+        "title": {
+          "description": "运行标题：任务理解后为事件名，之前为问题截断",
+          "type": "string"
+        },
+        "tool_calls": {
+          "items": {
+            "$ref": "#/definitions/ToolCall"
+          },
+          "type": "array"
+        },
+        "usage": {
+          "$ref": "#/definitions/BudgetUsage"
+        }
+      },
+      "required": [
+        "actions",
+        "budget",
+        "claims",
+        "clarification",
+        "counts",
+        "created_at",
+        "decisions",
+        "documents",
+        "error",
+        "evidence",
+        "finished_at",
+        "gaps",
+        "id",
+        "last_event_seq",
+        "origin_groups",
+        "phase",
+        "plans",
+        "report",
+        "request",
+        "research_round",
+        "review_round",
+        "reviews",
+        "started_at",
+        "status",
+        "stop_reason",
+        "task",
+        "timeline",
+        "title",
+        "tool_calls",
+        "usage"
+      ],
+      "type": "object"
+    },
+    "RunError": {
+      "additionalProperties": false,
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "message"
+      ],
+      "type": "object"
+    },
+    "RunEvent": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "additionalProperties": false,
+              "properties": {
+                "phase": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions/Phase"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "status": {
+                  "$ref": "#/definitions/RunStatus"
+                }
+              },
+              "required": [
+                "status",
+                "phase"
+              ],
+              "type": "object"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "seq": {
+              "description": "单个运行内从 1 开始严格递增",
+              "type": "number"
+            },
+            "ts": {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            "type": {
+              "const": "run.status",
+              "type": "string"
+            }
+          },
+          "required": [
+            "seq",
+            "run_id",
+            "ts",
+            "type",
+            "data"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "additionalProperties": false,
+              "properties": {
+                "round": {
+                  "type": "number"
+                },
+                "step": {
+                  "$ref": "#/definitions/Phase"
+                }
+              },
+              "required": [
+                "step",
+                "round"
+              ],
+              "type": "object"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "seq": {
+              "description": "单个运行内从 1 开始严格递增",
+              "type": "number"
+            },
+            "ts": {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            "type": {
+              "const": "step.started",
+              "type": "string"
+            }
+          },
+          "required": [
+            "seq",
+            "run_id",
+            "ts",
+            "type",
+            "data"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "additionalProperties": false,
+              "properties": {
+                "duration_ms": {
+                  "type": "number"
+                },
+                "round": {
+                  "type": "number"
+                },
+                "step": {
+                  "$ref": "#/definitions/Phase"
+                }
+              },
+              "required": [
+                "step",
+                "round",
+                "duration_ms"
+              ],
+              "type": "object"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "seq": {
+              "description": "单个运行内从 1 开始严格递增",
+              "type": "number"
+            },
+            "ts": {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            "type": {
+              "const": "step.completed",
+              "type": "string"
+            }
+          },
+          "required": [
+            "seq",
+            "run_id",
+            "ts",
+            "type",
+            "data"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/TaskSpec"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "seq": {
+              "description": "单个运行内从 1 开始严格递增",
+              "type": "number"
+            },
+            "ts": {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            "type": {
+              "const": "task.assessed",
+              "type": "string"
+            }
+          },
+          "required": [
+            "seq",
+            "run_id",
+            "ts",
+            "type",
+            "data"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/ClarificationRequest"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "seq": {
+              "description": "单个运行内从 1 开始严格递增",
+              "type": "number"
+            },
+            "ts": {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            "type": {
+              "const": "clarification.requested",
+              "type": "string"
+            }
+          },
+          "required": [
+            "seq",
+            "run_id",
+            "ts",
+            "type",
+            "data"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/ClarificationAnswer"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "seq": {
+              "description": "单个运行内从 1 开始严格递增",
+              "type": "number"
+            },
+            "ts": {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            "type": {
+              "const": "clarification.answered",
+              "type": "string"
+            }
+          },
+          "required": [
+            "seq",
+            "run_id",
+            "ts",
+            "type",
+            "data"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/SubQuestion"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "seq": {
+              "description": "单个运行内从 1 开始严格递增",
+              "type": "number"
+            },
+            "ts": {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            "type": {
+              "const": "question.updated",
+              "type": "string"
+            }
+          },
+          "required": [
+            "seq",
+            "run_id",
+            "ts",
+            "type",
+            "data"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/ResearchPlan"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "seq": {
+              "description": "单个运行内从 1 开始严格递增",
+              "type": "number"
+            },
+            "ts": {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            "type": {
+              "const": "plan.created",
+              "type": "string"
+            }
+          },
+          "required": [
+            "seq",
+            "run_id",
+            "ts",
+            "type",
+            "data"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/ResearchAction"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "seq": {
+              "description": "单个运行内从 1 开始严格递增",
+              "type": "number"
+            },
+            "ts": {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            "type": {
+              "const": "action.upserted",
+              "type": "string"
+            }
+          },
+          "required": [
+            "seq",
+            "run_id",
+            "ts",
+            "type",
+            "data"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/ToolCall"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "seq": {
+              "description": "单个运行内从 1 开始严格递增",
+              "type": "number"
+            },
+            "ts": {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            "type": {
+              "const": "tool.called",
+              "type": "string"
+            }
+          },
+          "required": [
+            "seq",
+            "run_id",
+            "ts",
+            "type",
+            "data"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/SourceDocument"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "seq": {
+              "description": "单个运行内从 1 开始严格递增",
+              "type": "number"
+            },
+            "ts": {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            "type": {
+              "const": "document.added",
+              "type": "string"
+            }
+          },
+          "required": [
+            "seq",
+            "run_id",
+            "ts",
+            "type",
+            "data"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/OriginGroup"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "seq": {
+              "description": "单个运行内从 1 开始严格递增",
+              "type": "number"
+            },
+            "ts": {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            "type": {
+              "const": "origin_group.upserted",
+              "type": "string"
+            }
+          },
+          "required": [
+            "seq",
+            "run_id",
+            "ts",
+            "type",
+            "data"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/Evidence"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "seq": {
+              "description": "单个运行内从 1 开始严格递增",
+              "type": "number"
+            },
+            "ts": {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            "type": {
+              "const": "evidence.added",
+              "type": "string"
+            }
+          },
+          "required": [
+            "seq",
+            "run_id",
+            "ts",
+            "type",
+            "data"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/Claim"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "seq": {
+              "description": "单个运行内从 1 开始严格递增",
+              "type": "number"
+            },
+            "ts": {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            "type": {
+              "const": "claim.upserted",
+              "type": "string"
+            }
+          },
+          "required": [
+            "seq",
+            "run_id",
+            "ts",
+            "type",
+            "data"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/TimelineEntry"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "seq": {
+              "description": "单个运行内从 1 开始严格递增",
+              "type": "number"
+            },
+            "ts": {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            "type": {
+              "const": "timeline.upserted",
+              "type": "string"
+            }
+          },
+          "required": [
+            "seq",
+            "run_id",
+            "ts",
+            "type",
+            "data"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "type": "object"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "seq": {
+              "description": "单个运行内从 1 开始严格递增",
+              "type": "number"
+            },
+            "ts": {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            "type": {
+              "const": "timeline.removed",
+              "type": "string"
+            }
+          },
+          "required": [
+            "seq",
+            "run_id",
+            "ts",
+            "type",
+            "data"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/Gap"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "seq": {
+              "description": "单个运行内从 1 开始严格递增",
+              "type": "number"
+            },
+            "ts": {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            "type": {
+              "const": "gap.upserted",
+              "type": "string"
+            }
+          },
+          "required": [
+            "seq",
+            "run_id",
+            "ts",
+            "type",
+            "data"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/Decision"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "seq": {
+              "description": "单个运行内从 1 开始严格递增",
+              "type": "number"
+            },
+            "ts": {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            "type": {
+              "const": "decision.made",
+              "type": "string"
+            }
+          },
+          "required": [
+            "seq",
+            "run_id",
+            "ts",
+            "type",
+            "data"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/BudgetUsage"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "seq": {
+              "description": "单个运行内从 1 开始严格递增",
+              "type": "number"
+            },
+            "ts": {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            "type": {
+              "const": "budget.updated",
+              "type": "string"
+            }
+          },
+          "required": [
+            "seq",
+            "run_id",
+            "ts",
+            "type",
+            "data"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/Report"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "seq": {
+              "description": "单个运行内从 1 开始严格递增",
+              "type": "number"
+            },
+            "ts": {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            "type": {
+              "const": "report.updated",
+              "type": "string"
+            }
+          },
+          "required": [
+            "seq",
+            "run_id",
+            "ts",
+            "type",
+            "data"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/ReviewResult"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "seq": {
+              "description": "单个运行内从 1 开始严格递增",
+              "type": "number"
+            },
+            "ts": {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            "type": {
+              "const": "review.completed",
+              "type": "string"
+            }
+          },
+          "required": [
+            "seq",
+            "run_id",
+            "ts",
+            "type",
+            "data"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "additionalProperties": false,
+              "properties": {
+                "level": {
+                  "enum": [
+                    "debug",
+                    "info",
+                    "warning",
+                    "error"
+                  ],
+                  "type": "string"
+                },
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "level",
+                "message"
+              ],
+              "type": "object"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "seq": {
+              "description": "单个运行内从 1 开始严格递增",
+              "type": "number"
+            },
+            "ts": {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            "type": {
+              "const": "log",
+              "type": "string"
+            }
+          },
+          "required": [
+            "seq",
+            "run_id",
+            "ts",
+            "type",
+            "data"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "additionalProperties": false,
+              "properties": {
+                "finished_at": {
+                  "$ref": "#/definitions/ISODateTime"
+                },
+                "status": {
+                  "$ref": "#/definitions/RunStatus"
+                },
+                "stop_reason": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions/StopReason"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "status",
+                "stop_reason",
+                "finished_at"
+              ],
+              "type": "object"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "seq": {
+              "description": "单个运行内从 1 开始严格递增",
+              "type": "number"
+            },
+            "ts": {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            "type": {
+              "const": "run.finished",
+              "type": "string"
+            }
+          },
+          "required": [
+            "seq",
+            "run_id",
+            "ts",
+            "type",
+            "data"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/RunError"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "seq": {
+              "description": "单个运行内从 1 开始严格递增",
+              "type": "number"
+            },
+            "ts": {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            "type": {
+              "const": "run.error",
+              "type": "string"
+            }
+          },
+          "required": [
+            "seq",
+            "run_id",
+            "ts",
+            "type",
+            "data"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "RunEventType": {
+      "enum": [
+        "run.status",
+        "step.started",
+        "step.completed",
+        "task.assessed",
+        "clarification.requested",
+        "clarification.answered",
+        "question.updated",
+        "plan.created",
+        "action.upserted",
+        "tool.called",
+        "document.added",
+        "origin_group.upserted",
+        "evidence.added",
+        "claim.upserted",
+        "timeline.upserted",
+        "timeline.removed",
+        "gap.upserted",
+        "decision.made",
+        "budget.updated",
+        "report.updated",
+        "review.completed",
+        "log",
+        "run.finished",
+        "run.error"
+      ],
+      "type": "string"
+    },
+    "RunListResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/definitions/RunSummary"
+          },
+          "type": "array"
+        },
+        "next_cursor": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "items",
+        "next_cursor"
+      ],
+      "type": "object"
+    },
+    "RunRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "budget": {
+          "anyOf": [
+            {
+              "additionalProperties": false,
+              "properties": {
+                "max_cost_usd": {
+                  "description": "美元成本上限，null 表示不限制",
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "max_llm_tokens": {
+                  "description": "LLM 输入+输出 token 总数",
+                  "type": "number"
+                },
+                "max_research_rounds": {
+                  "type": "number"
+                },
+                "max_review_rounds": {
+                  "type": "number"
+                },
+                "max_seconds": {
+                  "type": "number"
+                },
+                "max_tool_calls": {
+                  "description": "search + read 工具调用总数",
+                  "type": "number"
+                },
+                "reserve_ratio": {
+                  "description": "为写报告与审查预留的预算比例（0~1），研究循环不得占用",
+                  "type": "number"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "budget_preset 为 custom 时必填；否则可为 null（使用预设）或作为对预设的覆盖"
+        },
+        "budget_preset": {
+          "$ref": "#/definitions/BudgetPreset"
+        },
+        "cutoff": {
+          "$ref": "#/definitions/ISODateTime",
+          "description": "信息截止时间"
+        },
+        "event_hint": {
+          "description": "可选的事件名提示，帮助消歧",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "mechanisms": {
+          "$ref": "#/definitions/Mechanisms"
+        },
+        "model_profile": {
+          "description": "模型配置档 id（见 AppConfig.model_profiles），null 用默认",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "question": {
+          "description": "用户的问题或事件描述",
+          "type": "string"
+        },
+        "report_language": {
+          "$ref": "#/definitions/Lang"
+        },
+        "search_mode": {
+          "$ref": "#/definitions/SearchMode"
+        },
+        "seed_url": {
+          "description": "可选的新闻链接，作为种子文档",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "snapshot_id": {
+          "description": "search_mode 为 snapshot 时必填",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "temporal_mode": {
+          "$ref": "#/definitions/TemporalMode"
+        }
+      },
+      "required": [
+        "question",
+        "event_hint",
+        "cutoff",
+        "temporal_mode",
+        "seed_url",
+        "report_language",
+        "budget_preset",
+        "budget",
+        "mechanisms",
+        "search_mode",
+        "snapshot_id",
+        "model_profile",
+        "tags"
+      ],
+      "type": "object"
+    },
+    "RunStatus": {
+      "description": "运行状态。completed / partial / failed / cancelled 为终态",
+      "enum": [
+        "queued",
+        "running",
+        "awaiting_clarification",
+        "completed",
+        "partial",
+        "failed",
+        "cancelled"
+      ],
+      "type": "string"
+    },
+    "RunSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "budget": {
+          "$ref": "#/definitions/BudgetLimits"
+        },
+        "counts": {
+          "additionalProperties": false,
+          "properties": {
+            "claims": {
+              "type": "number"
+            },
+            "documents": {
+              "type": "number"
+            },
+            "open_gaps": {
+              "type": "number"
+            },
+            "timeline_entries": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "documents",
+            "claims",
+            "timeline_entries",
+            "open_gaps"
+          ],
+          "type": "object"
+        },
+        "created_at": {
+          "$ref": "#/definitions/ISODateTime"
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "phase": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Phase"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "request": {
+          "$ref": "#/definitions/RunRequest"
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "$ref": "#/definitions/RunStatus"
+        },
+        "stop_reason": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/StopReason"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "description": "运行标题：任务理解后为事件名，之前为问题截断",
+          "type": "string"
+        },
+        "usage": {
+          "$ref": "#/definitions/BudgetUsage"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "status",
+        "phase",
+        "request",
+        "budget",
+        "usage",
+        "created_at",
+        "started_at",
+        "finished_at",
+        "stop_reason",
+        "counts"
+      ],
+      "type": "object"
+    },
+    "SearchMode": {
+      "description": "信息检索方式：live 实时搜索；snapshot 回放已录制的检索快照；corpus 本地语料库（BrowseComp-Plus）",
+      "enum": [
+        "live",
+        "snapshot",
+        "corpus"
+      ],
+      "type": "string"
+    },
+    "SnapshotInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "$ref": "#/definitions/ISODateTime"
+        },
+        "entries": {
+          "type": "number"
+        },
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "created_at",
+        "entries"
+      ],
+      "type": "object"
+    },
+    "SourceDocument": {
+      "additionalProperties": false,
+      "properties": {
+        "action_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "attribution": {
+          "description": "文中声明的出处，如 \"according to Reuters\"",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "available_at_cutoff": {
+          "description": "截止时间时是否已公开；无法判断为 null",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "domain": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "is_original": {
+          "description": "是否为原始来源（如官方公告原文）；未知为 null",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "language": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "origin_group_id": {
+          "description": "转载归并后的来源组 id；启用 source_verification 时每篇文档最终都属于一个组（允许单文档组），未启用时为 null",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "provider": {
+          "enum": [
+            "tavily",
+            "exa",
+            "corpus",
+            "seed",
+            "cache"
+          ],
+          "type": "string"
+        },
+        "published_at": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/ISODateTime"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "published_at_source": {
+          "description": "发布时间的来源：页面元数据 / 搜索 API / 正文推断 / 未知",
+          "enum": [
+            "metadata",
+            "search_api",
+            "content",
+            "unknown"
+          ],
+          "type": "string"
+        },
+        "publisher": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "retrieved_at": {
+          "$ref": "#/definitions/ISODateTime"
+        },
+        "round": {
+          "type": "number"
+        },
+        "snippet": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "url",
+        "title",
+        "domain",
+        "publisher",
+        "author",
+        "published_at",
+        "published_at_source",
+        "retrieved_at",
+        "provider",
+        "origin_group_id",
+        "is_original",
+        "attribution",
+        "available_at_cutoff",
+        "language",
+        "snippet",
+        "round",
+        "action_id"
+      ],
+      "type": "object"
+    },
+    "StopReason": {
+      "enum": [
+        "questions_answered",
+        "no_progress",
+        "budget_exhausted",
+        "time_limit",
+        "review_passed",
+        "review_unresolved",
+        "cancelled",
+        "error"
+      ],
+      "type": "string"
+    },
+    "SubQuestion": {
+      "additionalProperties": false,
+      "properties": {
+        "answer_claim_ids": {
+          "description": "回答该问题的声明 id",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "id": {
+          "type": "string"
+        },
+        "priority": {
+          "description": "core 决定主答案；supporting 为补充背景",
+          "enum": [
+            "core",
+            "supporting"
+          ],
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "open",
+            "partial",
+            "answered",
+            "unanswerable"
+          ],
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "text",
+        "priority",
+        "status",
+        "answer_claim_ids"
+      ],
+      "type": "object"
+    },
+    "TaskResult": {
+      "additionalProperties": false,
+      "properties": {
+        "benchmark": {
+          "$ref": "#/definitions/BenchmarkId"
+        },
+        "condition": {
+          "$ref": "#/definitions/ConditionId"
+        },
+        "cost_usd": {
+          "type": "number"
+        },
+        "metrics": {
+          "additionalProperties": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "type": "object"
+        },
+        "repeat": {
+          "type": "number"
+        },
+        "run_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seconds": {
+          "type": "number"
+        },
+        "status": {
+          "enum": [
+            "completed",
+            "partial",
+            "failed"
+          ],
+          "type": "string"
+        },
+        "task_id": {
+          "type": "string"
+        },
+        "tokens": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "task_id",
+        "benchmark",
+        "condition",
+        "repeat",
+        "run_id",
+        "status",
+        "metrics",
+        "cost_usd",
+        "tokens",
+        "seconds"
+      ],
+      "type": "object"
+    },
+    "TaskSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "assumptions": {
+          "description": "任务理解时做出的假设（未向用户澄清的部分）",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "cutoff": {
+          "$ref": "#/definitions/ISODateTime"
+        },
+        "entities": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "event_name": {
+          "type": "string"
+        },
+        "event_type": {
+          "$ref": "#/definitions/EventType"
+        },
+        "initial_window": {
+          "$ref": "#/definitions/TimeWindow"
+        },
+        "questions": {
+          "items": {
+            "$ref": "#/definitions/SubQuestion"
+          },
+          "type": "array"
+        },
+        "stage_model": {
+          "description": "该类事件的典型阶段序列，如收购：announced → agreement_signed → regulatory_review → approved → closed",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "temporal_mode": {
+          "$ref": "#/definitions/TemporalMode"
+        }
+      },
+      "required": [
+        "event_name",
+        "event_type",
+        "entities",
+        "questions",
+        "cutoff",
+        "temporal_mode",
+        "initial_window",
+        "stage_model",
+        "assumptions"
+      ],
+      "type": "object"
+    },
+    "TemporalMode": {
+      "description": "时间模式：\n- as_of：只使用截止时间前已公开的信息（复现\"当时能知道什么\"）\n- retrospective：回溯重建，可使用截止时间之后发布、但描述截止时间之前事件的资料",
+      "enum": [
+        "as_of",
+        "retrospective"
+      ],
+      "type": "string"
+    },
+    "TimeWindow": {
+      "additionalProperties": false,
+      "properties": {
+        "end": {
+          "$ref": "#/definitions/ISODate"
+        },
+        "start": {
+          "$ref": "#/definitions/ISODate"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "type": "object"
+    },
+    "TimelineEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_ids": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "date": {
+          "$ref": "#/definitions/DateRef"
+        },
+        "id": {
+          "type": "string"
+        },
+        "is_milestone": {
+          "type": "boolean"
+        },
+        "stage": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "summary": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "verdict": {
+          "$ref": "#/definitions/Verdict",
+          "description": "由关联声明聚合"
+        }
+      },
+      "required": [
+        "id",
+        "date",
+        "title",
+        "summary",
+        "stage",
+        "claim_ids",
+        "verdict",
+        "is_milestone"
+      ],
+      "type": "object"
+    },
+    "ToolCall": {
+      "additionalProperties": false,
+      "properties": {
+        "action_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "at": {
+          "$ref": "#/definitions/ISODateTime"
+        },
+        "cached": {
+          "description": "命中检索快照/缓存",
+          "type": "boolean"
+        },
+        "duration_ms": {
+          "type": "number"
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "input": {
+          "description": "search 为查询串，read 为 URL",
+          "type": "string"
+        },
+        "ok": {
+          "type": "boolean"
+        },
+        "provider": {
+          "enum": [
+            "tavily",
+            "exa",
+            "corpus",
+            "http",
+            "cache"
+          ],
+          "type": "string"
+        },
+        "result_count": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "tool": {
+          "enum": [
+            "search",
+            "read"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "action_id",
+        "tool",
+        "provider",
+        "input",
+        "ok",
+        "result_count",
+        "duration_ms",
+        "cached",
+        "error",
+        "at"
+      ],
+      "type": "object"
+    },
+    "Verdict": {
+      "description": "证据状态：描述证据对声明的支持程度，不等于\"真/假\"。\n- supported：有独立证据支持且无有效反驳\n- contradicted：可靠证据反驳\n- conflicting：证据之间存在真实冲突（已排除主体/日期/条件不一致造成的假冲突）\n- insufficient：证据不足",
+      "enum": [
+        "supported",
+        "contradicted",
+        "conflicting",
+        "insufficient"
+      ],
+      "type": "string"
+    },
+    "VerdictRevision": {
+      "additionalProperties": false,
+      "properties": {
+        "at": {
+          "$ref": "#/definitions/ISODateTime"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "round": {
+          "type": "number"
+        },
+        "verdict": {
+          "$ref": "#/definitions/Verdict"
+        }
+      },
+      "required": [
+        "verdict",
+        "reason",
+        "round",
+        "at"
+      ],
+      "type": "object"
+    }
+  }
+}

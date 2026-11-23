@@ -1,0 +1,37 @@
+# 依赖与构建产物
+node_modules/
+frontend/dist/
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+*.tsbuildinfo
+
+# 运行数据（数据库、缓存、快照、基准数据、实验结果）
+data/
+
+# 密钥与本地配置
+.env
+.env.*
+!.env.example
+*.local
+
+# 课程提案原件（不随仓库分发）
+news_research_agent_proposal.pdf
+
+# 编辑器与 Agent 工具的本地配置
+.claude/
+.vscode/
+.idea/
+
+# 日志与系统文件
+*.log
+.DS_Store
+Thumbs.db

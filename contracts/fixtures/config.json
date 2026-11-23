@@ -1,0 +1,90 @@
+{
+  "mode": "live",
+  "version": "0.1.0",
+  "model_profiles": [
+    {
+      "id": "default",
+      "label": "DeepSeek V3 (all roles)",
+      "provider": "api.deepseek.com",
+      "roles": {
+        "controller": "deepseek-chat",
+        "extractor": "deepseek-chat",
+        "writer": "deepseek-chat",
+        "reviewer": "deepseek-chat"
+      }
+    },
+    {
+      "id": "mixed",
+      "label": "Qwen extractor + DeepSeek writer",
+      "provider": "dashscope.aliyuncs.com",
+      "roles": {
+        "controller": "deepseek-chat",
+        "extractor": "qwen-plus",
+        "writer": "deepseek-chat",
+        "reviewer": "qwen-max"
+      }
+    }
+  ],
+  "default_model_profile": "default",
+  "search_providers": [
+    {
+      "id": "tavily",
+      "available": true
+    },
+    {
+      "id": "exa",
+      "available": true
+    },
+    {
+      "id": "corpus",
+      "available": false
+    }
+  ],
+  "snapshots": [
+    {
+      "id": "snap_opentls_dev",
+      "label": "Open-TLS dev pool (frozen)",
+      "created_at": "2026-11-10T09:00:00Z",
+      "entries": 4812
+    }
+  ],
+  "budget_presets": {
+    "small": {
+      "max_research_rounds": 3,
+      "max_review_rounds": 1,
+      "max_tool_calls": 30,
+      "max_llm_tokens": 300000,
+      "max_seconds": 300,
+      "max_cost_usd": 0.3,
+      "reserve_ratio": 0.25
+    },
+    "medium": {
+      "max_research_rounds": 5,
+      "max_review_rounds": 2,
+      "max_tool_calls": 60,
+      "max_llm_tokens": 800000,
+      "max_seconds": 600,
+      "max_cost_usd": 0.8,
+      "reserve_ratio": 0.25
+    },
+    "large": {
+      "max_research_rounds": 8,
+      "max_review_rounds": 3,
+      "max_tool_calls": 120,
+      "max_llm_tokens": 2000000,
+      "max_seconds": 1200,
+      "max_cost_usd": 2,
+      "reserve_ratio": 0.2
+    }
+  },
+  "defaults": {
+    "temporal_mode": "as_of",
+    "report_language": "en",
+    "budget_preset": "medium",
+    "mechanisms": {
+      "source_verification": true,
+      "temporal_planning": true
+    },
+    "search_mode": "live"
+  }
+}

@@ -1,0 +1,26 @@
+你会看到一个参考资料和一些statement，请你判断对于参考资料来说statement是supported、unsupported、或者unknown，注意：
+首先判断参考资料是否存在有效内容，如果参考资料中没有任何有效信息，如"page not found"页面，则认为所有statement的状态都是unknown。
+除此之外，参考资料有效的情况下，对于一个statement来说，如果它包含的事实或数据在参考资料中可以全部或部分找到，就认为它是supported的（数据接受四舍五入）；如果statement中所有的事实和数据在参考资料中都找不到，认为它是unsupported的。
+
+你应该返回json列表格式，列表中的每一项包含statement的序号和判断结果，例如：
+[
+    {{
+        "idx": 1,
+        "result": "supported"
+    }},
+    {{
+        "idx": 2,
+        "result": "unsupported"
+    }}
+]
+
+下面是参考资料和statements：
+<reference>
+{reference}
+</reference>
+
+<statements>
+{statements}
+</statements>
+
+下面开始判断，直接输出json列表，不要输出任何闲聊或解释。

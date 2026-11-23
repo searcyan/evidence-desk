@@ -1,0 +1,421 @@
+{
+  "id": "run_demo03",
+  "title": "Northwind Robotics' acquisition of Helios Sensors",
+  "status": "failed",
+  "phase": null,
+  "request": {
+    "question": "Has Northwind Robotics completed its acquisition of Helios Sensors, and which approvals were still pending?",
+    "event_hint": null,
+    "cutoff": "2024-06-30T23:59:59Z",
+    "temporal_mode": "as_of",
+    "seed_url": null,
+    "report_language": "en",
+    "budget_preset": "medium",
+    "budget": null,
+    "mechanisms": {
+      "source_verification": true,
+      "temporal_planning": true
+    },
+    "search_mode": "live",
+    "snapshot_id": null,
+    "model_profile": null,
+    "tags": []
+  },
+  "budget": {
+    "max_research_rounds": 5,
+    "max_review_rounds": 2,
+    "max_tool_calls": 60,
+    "max_llm_tokens": 800000,
+    "max_seconds": 600,
+    "max_cost_usd": 0.8,
+    "reserve_ratio": 0.25
+  },
+  "usage": {
+    "research_rounds": 1,
+    "review_rounds": 0,
+    "search_calls": 2,
+    "read_calls": 4,
+    "llm_calls": 3,
+    "input_tokens": 24800,
+    "output_tokens": 3600,
+    "cost_usd": 0.0107,
+    "elapsed_seconds": 7
+  },
+  "created_at": "2026-11-20T08:00:00Z",
+  "started_at": "2026-11-20T08:00:00Z",
+  "finished_at": "2026-11-20T08:00:07Z",
+  "stop_reason": "error",
+  "counts": {
+    "documents": 4,
+    "claims": 0,
+    "timeline_entries": 0,
+    "open_gaps": 0
+  },
+  "task": {
+    "event_name": "Northwind Robotics' acquisition of Helios Sensors",
+    "event_type": "acquisition",
+    "entities": [
+      "Northwind Robotics",
+      "Helios Sensors",
+      "European Commission",
+      "US FTC"
+    ],
+    "questions": [
+      {
+        "id": "q_1",
+        "text": "Had the acquisition been completed as of the cutoff? If not, what stage was it in?",
+        "priority": "core",
+        "status": "open",
+        "answer_claim_ids": []
+      },
+      {
+        "id": "q_2",
+        "text": "Which regulatory and shareholder approvals had been obtained, and when?",
+        "priority": "core",
+        "status": "open",
+        "answer_claim_ids": []
+      },
+      {
+        "id": "q_3",
+        "text": "When and on what terms was the deal announced?",
+        "priority": "supporting",
+        "status": "open",
+        "answer_claim_ids": []
+      },
+      {
+        "id": "q_4",
+        "text": "What preceded the announcement?",
+        "priority": "supporting",
+        "status": "open",
+        "answer_claim_ids": []
+      }
+    ],
+    "cutoff": "2024-06-30T23:59:59Z",
+    "temporal_mode": "as_of",
+    "initial_window": {
+      "start": "2024-01-01",
+      "end": "2024-06-30"
+    },
+    "stage_model": [
+      "talks",
+      "announced",
+      "shareholder_approval",
+      "regulatory_review",
+      "regulatory_approval",
+      "closed"
+    ],
+    "assumptions": [
+      "\"Completed\" means the transaction has legally closed, not merely been approved.",
+      "Status is assessed using only information public by June 30, 2024."
+    ]
+  },
+  "clarification": null,
+  "research_round": 1,
+  "review_round": 0,
+  "plans": [
+    {
+      "round": 1,
+      "created_at": "2026-11-20T08:00:03Z",
+      "rationale": "Start from the announcement, then look for regulatory milestones and any report of closing.",
+      "windows": [
+        {
+          "start": "2024-01-01",
+          "end": "2024-06-30"
+        }
+      ],
+      "source_strategy": "Prefer company press releases and regulator notices; use news reports for corroboration.",
+      "action_ids": [
+        "act_01",
+        "act_02",
+        "act_03"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "act_01",
+      "round": 1,
+      "type": "search",
+      "status": "done",
+      "gap_id": null,
+      "question_ids": [
+        "q_1",
+        "q_3"
+      ],
+      "rationale": "Find the original announcement and deal terms.",
+      "params": {
+        "query": "Northwind Robotics Helios Sensors acquisition",
+        "window": {
+          "start": "2024-01-01",
+          "end": "2024-06-30"
+        },
+        "date": null,
+        "url": null,
+        "claim_id": null
+      },
+      "result": {
+        "documents_added": 4,
+        "evidence_added": 3,
+        "duplicates": 0,
+        "note": null
+      },
+      "started_at": "2026-11-20T08:00:03Z",
+      "finished_at": "2026-11-20T08:00:06Z"
+    },
+    {
+      "id": "act_02",
+      "round": 1,
+      "type": "search",
+      "status": "planned",
+      "gap_id": null,
+      "question_ids": [
+        "q_2"
+      ],
+      "rationale": "Identify regulatory reviews of the deal.",
+      "params": {
+        "query": "Northwind Helios regulatory review antitrust",
+        "window": {
+          "start": "2024-01-01",
+          "end": "2024-06-30"
+        },
+        "date": null,
+        "url": null,
+        "claim_id": null
+      },
+      "result": null,
+      "started_at": null,
+      "finished_at": null
+    },
+    {
+      "id": "act_03",
+      "round": 1,
+      "type": "search",
+      "status": "planned",
+      "gap_id": null,
+      "question_ids": [
+        "q_1"
+      ],
+      "rationale": "Check whether the deal has closed.",
+      "params": {
+        "query": "Northwind Helios deal closed completed",
+        "window": {
+          "start": "2024-01-01",
+          "end": "2024-06-30"
+        },
+        "date": null,
+        "url": null,
+        "claim_id": null
+      },
+      "result": null,
+      "started_at": null,
+      "finished_at": null
+    }
+  ],
+  "tool_calls": [
+    {
+      "id": "tc_001",
+      "action_id": "act_01",
+      "tool": "search",
+      "provider": "tavily",
+      "input": "Northwind Robotics Helios Sensors acquisition",
+      "ok": true,
+      "result_count": 6,
+      "duration_ms": 800,
+      "cached": false,
+      "error": null,
+      "at": "2026-11-20T08:00:04Z"
+    },
+    {
+      "id": "tc_002",
+      "action_id": "act_01",
+      "tool": "read",
+      "provider": "tavily",
+      "input": "https://newsroom.northwind-robotics.example/2024/01/15/northwind-to-acquire-helios",
+      "ok": true,
+      "result_count": 1,
+      "duration_ms": 450,
+      "cached": false,
+      "error": null,
+      "at": "2026-11-20T08:00:04Z"
+    },
+    {
+      "id": "tc_003",
+      "action_id": "act_01",
+      "tool": "read",
+      "provider": "tavily",
+      "input": "https://globalwire.example/business/northwind-helios-deal",
+      "ok": true,
+      "result_count": 1,
+      "duration_ms": 450,
+      "cached": false,
+      "error": null,
+      "at": "2026-11-20T08:00:05Z"
+    },
+    {
+      "id": "tc_004",
+      "action_id": "act_01",
+      "tool": "read",
+      "provider": "tavily",
+      "input": "https://marketbeat-daily.example/m-and-a/northwind-helios",
+      "ok": true,
+      "result_count": 1,
+      "duration_ms": 450,
+      "cached": false,
+      "error": null,
+      "at": "2026-11-20T08:00:05Z"
+    },
+    {
+      "id": "tc_005",
+      "action_id": "act_01",
+      "tool": "read",
+      "provider": "tavily",
+      "input": "https://techjournal.example/2024/01/16/helios-acquisition-what-we-know",
+      "ok": true,
+      "result_count": 1,
+      "duration_ms": 450,
+      "cached": false,
+      "error": null,
+      "at": "2026-11-20T08:00:06Z"
+    },
+    {
+      "id": "tc_006",
+      "action_id": "act_02",
+      "tool": "search",
+      "provider": "tavily",
+      "input": "Northwind Helios regulatory review antitrust",
+      "ok": false,
+      "result_count": null,
+      "duration_ms": 300,
+      "cached": false,
+      "error": "HTTP 401 Unauthorized",
+      "at": "2026-11-20T08:00:07Z"
+    }
+  ],
+  "documents": [
+    {
+      "id": "doc_01",
+      "url": "https://newsroom.northwind-robotics.example/2024/01/15/northwind-to-acquire-helios",
+      "title": "Northwind Robotics to Acquire Helios Sensors for $2.1 Billion",
+      "domain": "newsroom.northwind-robotics.example",
+      "publisher": "Northwind Robotics",
+      "author": null,
+      "published_at": "2024-01-15T13:00:00Z",
+      "published_at_source": "metadata",
+      "retrieved_at": "2026-11-20T08:00:04Z",
+      "provider": "tavily",
+      "origin_group_id": null,
+      "is_original": true,
+      "attribution": null,
+      "available_at_cutoff": true,
+      "language": "en",
+      "snippet": "Northwind Robotics today announced it has entered into a definitive agreement to acquire Helios Sensors…",
+      "round": 1,
+      "action_id": "act_01"
+    },
+    {
+      "id": "doc_02",
+      "url": "https://globalwire.example/business/northwind-helios-deal",
+      "title": "Northwind Robotics agrees to buy Helios Sensors in $2.1 billion deal",
+      "domain": "globalwire.example",
+      "publisher": "GlobalWire",
+      "author": null,
+      "published_at": "2024-01-15T14:12:00Z",
+      "published_at_source": "search_api",
+      "retrieved_at": "2026-11-20T08:00:04Z",
+      "provider": "tavily",
+      "origin_group_id": null,
+      "is_original": false,
+      "attribution": "Northwind Robotics press release",
+      "available_at_cutoff": true,
+      "language": "en",
+      "snippet": "Northwind Robotics has agreed to buy Helios Sensors for about $2.1 billion in cash, the company said on Monday…",
+      "round": 1,
+      "action_id": "act_01"
+    },
+    {
+      "id": "doc_03",
+      "url": "https://marketbeat-daily.example/m-and-a/northwind-helios",
+      "title": "Northwind to buy Helios Sensors for $2.1B",
+      "domain": "marketbeat-daily.example",
+      "publisher": "MarketBeat Daily",
+      "author": null,
+      "published_at": "2024-01-16T07:40:00Z",
+      "published_at_source": "search_api",
+      "retrieved_at": "2026-11-20T08:00:05Z",
+      "provider": "tavily",
+      "origin_group_id": null,
+      "is_original": false,
+      "attribution": "GlobalWire",
+      "available_at_cutoff": true,
+      "language": "en",
+      "snippet": "Northwind Robotics has agreed to buy Helios Sensors for about $2.1 billion in cash…",
+      "round": 1,
+      "action_id": "act_01"
+    },
+    {
+      "id": "doc_04",
+      "url": "https://techjournal.example/2024/01/16/helios-acquisition-what-we-know",
+      "title": "Helios Sensors acquisition: what we know",
+      "domain": "techjournal.example",
+      "publisher": "TechJournal",
+      "author": null,
+      "published_at": "2024-01-16T10:05:00Z",
+      "published_at_source": "search_api",
+      "retrieved_at": "2026-11-20T08:00:05Z",
+      "provider": "tavily",
+      "origin_group_id": null,
+      "is_original": false,
+      "attribution": "Northwind Robotics press release",
+      "available_at_cutoff": true,
+      "language": "en",
+      "snippet": "According to the company announcement, the all-cash transaction is valued at roughly $2.1 billion…",
+      "round": 1,
+      "action_id": "act_01"
+    }
+  ],
+  "origin_groups": [],
+  "evidence": [
+    {
+      "id": "ev_01",
+      "document_id": "doc_01",
+      "quote": "Northwind Robotics today announced it has entered into a definitive agreement to acquire Helios Sensors in an all-cash transaction valued at approximately $2.1 billion.",
+      "event_date": {
+        "start": "2024-01-15",
+        "end": "2024-01-15",
+        "precision": "day",
+        "text": "today"
+      },
+      "round": 1
+    },
+    {
+      "id": "ev_02",
+      "document_id": "doc_01",
+      "quote": "The transaction is expected to close in the second half of 2024, subject to regulatory approvals and approval by Helios shareholders.",
+      "event_date": null,
+      "round": 1
+    },
+    {
+      "id": "ev_03",
+      "document_id": "doc_02",
+      "quote": "Northwind Robotics has agreed to buy Helios Sensors for about $2.1 billion in cash, the company said on Monday.",
+      "event_date": {
+        "start": "2024-01-15",
+        "end": "2024-01-15",
+        "precision": "day",
+        "text": "on Monday"
+      },
+      "round": 1
+    }
+  ],
+  "claims": [],
+  "timeline": [],
+  "gaps": [],
+  "decisions": [],
+  "report": null,
+  "reviews": [],
+  "error": {
+    "type": "provider_error",
+    "message": "Search provider rejected the request: HTTP 401 Unauthorized (check TAVILY_API_KEY)."
+  },
+  "last_event_seq": 39
+}

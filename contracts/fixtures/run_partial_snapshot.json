@@ -1,0 +1,1355 @@
+{
+  "id": "run_demo02",
+  "title": "Northwind Robotics' acquisition of Helios Sensors",
+  "status": "partial",
+  "phase": null,
+  "request": {
+    "question": "Has Northwind Robotics completed its acquisition of Helios Sensors, and which approvals were still pending?",
+    "event_hint": null,
+    "cutoff": "2024-06-30T23:59:59Z",
+    "temporal_mode": "as_of",
+    "seed_url": null,
+    "report_language": "en",
+    "budget_preset": "small",
+    "budget": null,
+    "mechanisms": {
+      "source_verification": false,
+      "temporal_planning": false
+    },
+    "search_mode": "live",
+    "snapshot_id": null,
+    "model_profile": null,
+    "tags": []
+  },
+  "budget": {
+    "max_research_rounds": 3,
+    "max_review_rounds": 1,
+    "max_tool_calls": 30,
+    "max_llm_tokens": 300000,
+    "max_seconds": 300,
+    "max_cost_usd": 0.3,
+    "reserve_ratio": 0.25
+  },
+  "usage": {
+    "research_rounds": 2,
+    "review_rounds": 1,
+    "search_calls": 7,
+    "read_calls": 10,
+    "llm_calls": 17,
+    "input_tokens": 134100,
+    "output_tokens": 20600,
+    "cost_usd": 0.0589,
+    "elapsed_seconds": 32
+  },
+  "created_at": "2026-11-20T08:00:00Z",
+  "started_at": "2026-11-20T08:00:00Z",
+  "finished_at": "2026-11-20T08:00:32Z",
+  "stop_reason": "budget_exhausted",
+  "counts": {
+    "documents": 10,
+    "claims": 6,
+    "timeline_entries": 4,
+    "open_gaps": 1
+  },
+  "task": {
+    "event_name": "Northwind Robotics' acquisition of Helios Sensors",
+    "event_type": "acquisition",
+    "entities": [
+      "Northwind Robotics",
+      "Helios Sensors",
+      "European Commission",
+      "US FTC"
+    ],
+    "questions": [
+      {
+        "id": "q_1",
+        "text": "Had the acquisition been completed as of the cutoff? If not, what stage was it in?",
+        "priority": "core",
+        "status": "partial",
+        "answer_claim_ids": [
+          "cl_02"
+        ]
+      },
+      {
+        "id": "q_2",
+        "text": "Which regulatory and shareholder approvals had been obtained, and when?",
+        "priority": "core",
+        "status": "partial",
+        "answer_claim_ids": [
+          "cl_03",
+          "cl_05",
+          "cl_06"
+        ]
+      },
+      {
+        "id": "q_3",
+        "text": "When and on what terms was the deal announced?",
+        "priority": "supporting",
+        "status": "answered",
+        "answer_claim_ids": [
+          "cl_01"
+        ]
+      },
+      {
+        "id": "q_4",
+        "text": "What preceded the announcement?",
+        "priority": "supporting",
+        "status": "open",
+        "answer_claim_ids": []
+      }
+    ],
+    "cutoff": "2024-06-30T23:59:59Z",
+    "temporal_mode": "as_of",
+    "initial_window": {
+      "start": "2024-01-02",
+      "end": "2024-06-30"
+    },
+    "stage_model": [
+      "talks",
+      "announced",
+      "shareholder_approval",
+      "regulatory_review",
+      "regulatory_approval",
+      "closed"
+    ],
+    "assumptions": [
+      "\"Completed\" means the transaction has legally closed, not merely been approved.",
+      "Status is assessed using only information public by June 30, 2024."
+    ]
+  },
+  "clarification": null,
+  "research_round": 2,
+  "review_round": 1,
+  "plans": [
+    {
+      "round": 1,
+      "created_at": "2026-11-20T08:00:03Z",
+      "rationale": "Start from the announcement, then look for regulatory milestones and any report of closing.",
+      "windows": [
+        {
+          "start": "2024-01-01",
+          "end": "2024-06-30"
+        }
+      ],
+      "source_strategy": "Prefer company press releases and regulator notices; use news reports for corroboration.",
+      "action_ids": [
+        "act_01",
+        "act_02",
+        "act_03"
+      ]
+    },
+    {
+      "round": 2,
+      "created_at": "2026-11-20T08:00:16Z",
+      "rationale": "Target the open gaps: resolve the completion conflict at its source, fix the EU date, recover background and the missing shareholder phase.",
+      "windows": [
+        {
+          "start": "2024-01-02",
+          "end": "2024-06-30"
+        }
+      ],
+      "source_strategy": "Prefer regulator notices for dates; trace attributions to their originals.",
+      "action_ids": [
+        "act_04",
+        "act_05",
+        "act_06",
+        "act_07"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "act_01",
+      "round": 1,
+      "type": "search",
+      "status": "done",
+      "gap_id": null,
+      "question_ids": [
+        "q_1",
+        "q_3"
+      ],
+      "rationale": "Find the original announcement and deal terms.",
+      "params": {
+        "query": "Northwind Robotics Helios Sensors acquisition",
+        "window": {
+          "start": "2024-01-01",
+          "end": "2024-06-30"
+        },
+        "date": null,
+        "url": null,
+        "claim_id": null
+      },
+      "result": {
+        "documents_added": 4,
+        "evidence_added": 3,
+        "duplicates": 0,
+        "note": null
+      },
+      "started_at": "2026-11-20T08:00:03Z",
+      "finished_at": "2026-11-20T08:00:06Z"
+    },
+    {
+      "id": "act_02",
+      "round": 1,
+      "type": "search",
+      "status": "done",
+      "gap_id": null,
+      "question_ids": [
+        "q_2"
+      ],
+      "rationale": "Identify regulatory reviews of the deal.",
+      "params": {
+        "query": "Northwind Helios regulatory review antitrust",
+        "window": {
+          "start": "2024-01-01",
+          "end": "2024-06-30"
+        },
+        "date": null,
+        "url": null,
+        "claim_id": null
+      },
+      "result": {
+        "documents_added": 1,
+        "evidence_added": 2,
+        "duplicates": 1,
+        "note": null
+      },
+      "started_at": "2026-11-20T08:00:06Z",
+      "finished_at": "2026-11-20T08:00:08Z"
+    },
+    {
+      "id": "act_03",
+      "round": 1,
+      "type": "search",
+      "status": "done",
+      "gap_id": null,
+      "question_ids": [
+        "q_1"
+      ],
+      "rationale": "Check whether the deal has closed.",
+      "params": {
+        "query": "Northwind Helios deal closed completed",
+        "window": {
+          "start": "2024-01-01",
+          "end": "2024-06-30"
+        },
+        "date": null,
+        "url": null,
+        "claim_id": null
+      },
+      "result": {
+        "documents_added": 2,
+        "evidence_added": 2,
+        "duplicates": 2,
+        "note": null
+      },
+      "started_at": "2026-11-20T08:00:08Z",
+      "finished_at": "2026-11-20T08:00:11Z"
+    },
+    {
+      "id": "act_04",
+      "round": 2,
+      "type": "search",
+      "status": "done",
+      "gap_id": null,
+      "question_ids": [
+        "q_2"
+      ],
+      "rationale": "Pin down the exact date of the EU investigation.",
+      "params": {
+        "query": "European Commission in-depth investigation Helios Sensors March 2024",
+        "window": null,
+        "date": null,
+        "url": null,
+        "claim_id": null
+      },
+      "result": {
+        "documents_added": 1,
+        "evidence_added": 1,
+        "duplicates": 2,
+        "note": null
+      },
+      "started_at": "2026-11-20T08:00:16Z",
+      "finished_at": "2026-11-20T08:00:18Z"
+    },
+    {
+      "id": "act_05",
+      "round": 2,
+      "type": "search",
+      "status": "done",
+      "gap_id": null,
+      "question_ids": [
+        "q_1"
+      ],
+      "rationale": "Trace the source of the \"completed in April\" report.",
+      "params": {
+        "query": "Northwind Helios US clearance April 2024 Hart-Scott-Rodino",
+        "window": null,
+        "date": null,
+        "url": null,
+        "claim_id": "cl_04"
+      },
+      "result": {
+        "documents_added": 1,
+        "evidence_added": 1,
+        "duplicates": 1,
+        "note": null
+      },
+      "started_at": "2026-11-20T08:00:18Z",
+      "finished_at": "2026-11-20T08:00:20Z"
+    },
+    {
+      "id": "act_06",
+      "round": 2,
+      "type": "search",
+      "status": "done",
+      "gap_id": null,
+      "question_ids": [
+        "q_4"
+      ],
+      "rationale": "Extend the window backwards to capture pre-announcement background.",
+      "params": {
+        "query": "Northwind Robotics Helios talks",
+        "window": null,
+        "date": null,
+        "url": null,
+        "claim_id": null
+      },
+      "result": {
+        "documents_added": 0,
+        "evidence_added": 0,
+        "duplicates": 3,
+        "note": "Fixed window: nothing new before the announcement is reachable."
+      },
+      "started_at": "2026-11-20T08:00:20Z",
+      "finished_at": "2026-11-20T08:00:21Z"
+    },
+    {
+      "id": "act_07",
+      "round": 2,
+      "type": "search",
+      "status": "done",
+      "gap_id": null,
+      "question_ids": [
+        "q_2"
+      ],
+      "rationale": "Find the Helios shareholder vote.",
+      "params": {
+        "query": "Helios shareholders vote Northwind takeover",
+        "window": null,
+        "date": null,
+        "url": null,
+        "claim_id": null
+      },
+      "result": {
+        "documents_added": 1,
+        "evidence_added": 1,
+        "duplicates": 1,
+        "note": null
+      },
+      "started_at": "2026-11-20T08:00:21Z",
+      "finished_at": "2026-11-20T08:00:23Z"
+    }
+  ],
+  "tool_calls": [
+    {
+      "id": "tc_001",
+      "action_id": "act_01",
+      "tool": "search",
+      "provider": "tavily",
+      "input": "Northwind Robotics Helios Sensors acquisition",
+      "ok": true,
+      "result_count": 6,
+      "duration_ms": 800,
+      "cached": false,
+      "error": null,
+      "at": "2026-11-20T08:00:04Z"
+    },
+    {
+      "id": "tc_002",
+      "action_id": "act_01",
+      "tool": "read",
+      "provider": "tavily",
+      "input": "https://newsroom.northwind-robotics.example/2024/01/15/northwind-to-acquire-helios",
+      "ok": true,
+      "result_count": 1,
+      "duration_ms": 450,
+      "cached": false,
+      "error": null,
+      "at": "2026-11-20T08:00:04Z"
+    },
+    {
+      "id": "tc_003",
+      "action_id": "act_01",
+      "tool": "read",
+      "provider": "tavily",
+      "input": "https://globalwire.example/business/northwind-helios-deal",
+      "ok": true,
+      "result_count": 1,
+      "duration_ms": 450,
+      "cached": false,
+      "error": null,
+      "at": "2026-11-20T08:00:05Z"
+    },
+    {
+      "id": "tc_004",
+      "action_id": "act_01",
+      "tool": "read",
+      "provider": "tavily",
+      "input": "https://marketbeat-daily.example/m-and-a/northwind-helios",
+      "ok": true,
+      "result_count": 1,
+      "duration_ms": 450,
+      "cached": false,
+      "error": null,
+      "at": "2026-11-20T08:00:05Z"
+    },
+    {
+      "id": "tc_005",
+      "action_id": "act_01",
+      "tool": "read",
+      "provider": "tavily",
+      "input": "https://techjournal.example/2024/01/16/helios-acquisition-what-we-know",
+      "ok": true,
+      "result_count": 1,
+      "duration_ms": 450,
+      "cached": false,
+      "error": null,
+      "at": "2026-11-20T08:00:06Z"
+    },
+    {
+      "id": "tc_006",
+      "action_id": "act_02",
+      "tool": "search",
+      "provider": "tavily",
+      "input": "Northwind Helios regulatory review antitrust",
+      "ok": true,
+      "result_count": 4,
+      "duration_ms": 800,
+      "cached": false,
+      "error": null,
+      "at": "2026-11-20T08:00:07Z"
+    },
+    {
+      "id": "tc_007",
+      "action_id": "act_02",
+      "tool": "read",
+      "provider": "tavily",
+      "input": "https://eurobiz.example/competition/northwind-helios-closer-look",
+      "ok": true,
+      "result_count": 1,
+      "duration_ms": 450,
+      "cached": false,
+      "error": null,
+      "at": "2026-11-20T08:00:07Z"
+    },
+    {
+      "id": "tc_008",
+      "action_id": "act_03",
+      "tool": "search",
+      "provider": "tavily",
+      "input": "Northwind Helios deal closed completed",
+      "ok": true,
+      "result_count": 6,
+      "duration_ms": 800,
+      "cached": false,
+      "error": null,
+      "at": "2026-11-20T08:00:09Z"
+    },
+    {
+      "id": "tc_009",
+      "action_id": "act_03",
+      "tool": "read",
+      "provider": "tavily",
+      "input": "https://techledger.example/deals/northwind-closes-helios",
+      "ok": true,
+      "result_count": 1,
+      "duration_ms": 450,
+      "cached": false,
+      "error": null,
+      "at": "2026-11-20T08:00:09Z"
+    },
+    {
+      "id": "tc_010",
+      "action_id": "act_03",
+      "tool": "read",
+      "provider": "tavily",
+      "input": "https://newsroom.northwind-robotics.example/2024/07/09/northwind-completes-helios",
+      "ok": true,
+      "result_count": 1,
+      "duration_ms": 450,
+      "cached": false,
+      "error": null,
+      "at": "2026-11-20T08:00:10Z"
+    },
+    {
+      "id": "tc_011",
+      "action_id": "act_04",
+      "tool": "search",
+      "provider": "tavily",
+      "input": "European Commission in-depth investigation Helios Sensors March 2024",
+      "ok": true,
+      "result_count": 5,
+      "duration_ms": 800,
+      "cached": false,
+      "error": null,
+      "at": "2026-11-20T08:00:17Z"
+    },
+    {
+      "id": "tc_012",
+      "action_id": "act_04",
+      "tool": "read",
+      "provider": "tavily",
+      "input": "https://ec-press.example/presscorner/2024/03/18/ip-24-1520",
+      "ok": true,
+      "result_count": 1,
+      "duration_ms": 450,
+      "cached": false,
+      "error": null,
+      "at": "2026-11-20T08:00:17Z"
+    },
+    {
+      "id": "tc_013",
+      "action_id": "act_05",
+      "tool": "search",
+      "provider": "tavily",
+      "input": "Northwind Helios US clearance April 2024 Hart-Scott-Rodino",
+      "ok": true,
+      "result_count": 4,
+      "duration_ms": 800,
+      "cached": false,
+      "error": null,
+      "at": "2026-11-20T08:00:19Z"
+    },
+    {
+      "id": "tc_014",
+      "action_id": "act_05",
+      "tool": "read",
+      "provider": "tavily",
+      "input": "https://antitrustwatch.example/us/hsr-waiting-period-northwind-helios",
+      "ok": true,
+      "result_count": 1,
+      "duration_ms": 450,
+      "cached": false,
+      "error": null,
+      "at": "2026-11-20T08:00:19Z"
+    },
+    {
+      "id": "tc_015",
+      "action_id": "act_06",
+      "tool": "search",
+      "provider": "tavily",
+      "input": "Northwind Robotics Helios talks",
+      "ok": true,
+      "result_count": 5,
+      "duration_ms": 800,
+      "cached": false,
+      "error": null,
+      "at": "2026-11-20T08:00:21Z"
+    },
+    {
+      "id": "tc_016",
+      "action_id": "act_07",
+      "tool": "search",
+      "provider": "tavily",
+      "input": "Helios shareholders vote Northwind takeover",
+      "ok": true,
+      "result_count": 4,
+      "duration_ms": 800,
+      "cached": false,
+      "error": null,
+      "at": "2026-11-20T08:00:22Z"
+    },
+    {
+      "id": "tc_017",
+      "action_id": "act_07",
+      "tool": "read",
+      "provider": "tavily",
+      "input": "https://globalwire.example/business/helios-shareholders-approve",
+      "ok": true,
+      "result_count": 1,
+      "duration_ms": 450,
+      "cached": false,
+      "error": null,
+      "at": "2026-11-20T08:00:22Z"
+    }
+  ],
+  "documents": [
+    {
+      "id": "doc_01",
+      "url": "https://newsroom.northwind-robotics.example/2024/01/15/northwind-to-acquire-helios",
+      "title": "Northwind Robotics to Acquire Helios Sensors for $2.1 Billion",
+      "domain": "newsroom.northwind-robotics.example",
+      "publisher": "Northwind Robotics",
+      "author": null,
+      "published_at": "2024-01-15T13:00:00Z",
+      "published_at_source": "metadata",
+      "retrieved_at": "2026-11-20T08:00:04Z",
+      "provider": "tavily",
+      "origin_group_id": null,
+      "is_original": null,
+      "attribution": null,
+      "available_at_cutoff": true,
+      "language": "en",
+      "snippet": "Northwind Robotics today announced it has entered into a definitive agreement to acquire Helios Sensors…",
+      "round": 1,
+      "action_id": "act_01"
+    },
+    {
+      "id": "doc_02",
+      "url": "https://globalwire.example/business/northwind-helios-deal",
+      "title": "Northwind Robotics agrees to buy Helios Sensors in $2.1 billion deal",
+      "domain": "globalwire.example",
+      "publisher": "GlobalWire",
+      "author": null,
+      "published_at": "2024-01-15T14:12:00Z",
+      "published_at_source": "search_api",
+      "retrieved_at": "2026-11-20T08:00:04Z",
+      "provider": "tavily",
+      "origin_group_id": null,
+      "is_original": null,
+      "attribution": null,
+      "available_at_cutoff": true,
+      "language": "en",
+      "snippet": "Northwind Robotics has agreed to buy Helios Sensors for about $2.1 billion in cash, the company said on Monday…",
+      "round": 1,
+      "action_id": "act_01"
+    },
+    {
+      "id": "doc_03",
+      "url": "https://marketbeat-daily.example/m-and-a/northwind-helios",
+      "title": "Northwind to buy Helios Sensors for $2.1B",
+      "domain": "marketbeat-daily.example",
+      "publisher": "MarketBeat Daily",
+      "author": null,
+      "published_at": "2024-01-16T07:40:00Z",
+      "published_at_source": "search_api",
+      "retrieved_at": "2026-11-20T08:00:05Z",
+      "provider": "tavily",
+      "origin_group_id": null,
+      "is_original": null,
+      "attribution": null,
+      "available_at_cutoff": true,
+      "language": "en",
+      "snippet": "Northwind Robotics has agreed to buy Helios Sensors for about $2.1 billion in cash…",
+      "round": 1,
+      "action_id": "act_01"
+    },
+    {
+      "id": "doc_04",
+      "url": "https://techjournal.example/2024/01/16/helios-acquisition-what-we-know",
+      "title": "Helios Sensors acquisition: what we know",
+      "domain": "techjournal.example",
+      "publisher": "TechJournal",
+      "author": null,
+      "published_at": "2024-01-16T10:05:00Z",
+      "published_at_source": "search_api",
+      "retrieved_at": "2026-11-20T08:00:05Z",
+      "provider": "tavily",
+      "origin_group_id": null,
+      "is_original": null,
+      "attribution": null,
+      "available_at_cutoff": true,
+      "language": "en",
+      "snippet": "According to the company announcement, the all-cash transaction is valued at roughly $2.1 billion…",
+      "round": 1,
+      "action_id": "act_01"
+    },
+    {
+      "id": "doc_05",
+      "url": "https://eurobiz.example/competition/northwind-helios-closer-look",
+      "title": "EU regulators take a closer look at Northwind–Helios deal",
+      "domain": "eurobiz.example",
+      "publisher": "EuroBiz",
+      "author": null,
+      "published_at": "2024-05-02T09:30:00Z",
+      "published_at_source": "search_api",
+      "retrieved_at": "2026-11-20T08:00:07Z",
+      "provider": "tavily",
+      "origin_group_id": null,
+      "is_original": null,
+      "attribution": null,
+      "available_at_cutoff": true,
+      "language": "en",
+      "snippet": "In March, the European Commission opened an in-depth investigation into the deal…",
+      "round": 1,
+      "action_id": "act_02"
+    },
+    {
+      "id": "doc_06",
+      "url": "https://techledger.example/deals/northwind-closes-helios",
+      "title": "Northwind closes Helios purchase",
+      "domain": "techledger.example",
+      "publisher": "TechLedger",
+      "author": null,
+      "published_at": "2024-04-05T16:20:00Z",
+      "published_at_source": "search_api",
+      "retrieved_at": "2026-11-20T08:00:09Z",
+      "provider": "tavily",
+      "origin_group_id": null,
+      "is_original": null,
+      "attribution": null,
+      "available_at_cutoff": true,
+      "language": "en",
+      "snippet": "Northwind has completed its purchase of Helios Sensors after clearing its final regulatory hurdle…",
+      "round": 1,
+      "action_id": "act_03"
+    },
+    {
+      "id": "doc_07",
+      "url": "https://newsroom.northwind-robotics.example/2024/07/09/northwind-completes-helios",
+      "title": "Northwind Robotics Completes Acquisition of Helios Sensors",
+      "domain": "newsroom.northwind-robotics.example",
+      "publisher": "Northwind Robotics",
+      "author": null,
+      "published_at": "2024-07-09T12:00:00Z",
+      "published_at_source": "metadata",
+      "retrieved_at": "2026-11-20T08:00:09Z",
+      "provider": "tavily",
+      "origin_group_id": null,
+      "is_original": null,
+      "attribution": null,
+      "available_at_cutoff": false,
+      "language": "en",
+      "snippet": "Northwind Robotics today announced that it has completed its acquisition of Helios Sensors…",
+      "round": 1,
+      "action_id": "act_03"
+    },
+    {
+      "id": "doc_08",
+      "url": "https://ec-press.example/presscorner/2024/03/18/ip-24-1520",
+      "title": "Commission opens in-depth investigation into proposed acquisition of Helios Sensors by Northwind Robotics",
+      "domain": "ec-press.example",
+      "publisher": "European Commission (press corner)",
+      "author": null,
+      "published_at": "2024-03-18T10:00:00Z",
+      "published_at_source": "metadata",
+      "retrieved_at": "2026-11-20T08:00:17Z",
+      "provider": "tavily",
+      "origin_group_id": null,
+      "is_original": null,
+      "attribution": null,
+      "available_at_cutoff": true,
+      "language": "en",
+      "snippet": "The European Commission has opened an in-depth investigation to assess the proposed acquisition…",
+      "round": 2,
+      "action_id": "act_04"
+    },
+    {
+      "id": "doc_10",
+      "url": "https://antitrustwatch.example/us/hsr-waiting-period-northwind-helios",
+      "title": "US waiting period expires for Northwind–Helios deal",
+      "domain": "antitrustwatch.example",
+      "publisher": "AntitrustWatch",
+      "author": null,
+      "published_at": "2024-04-03T08:15:00Z",
+      "published_at_source": "search_api",
+      "retrieved_at": "2026-11-20T08:00:19Z",
+      "provider": "tavily",
+      "origin_group_id": null,
+      "is_original": null,
+      "attribution": null,
+      "available_at_cutoff": true,
+      "language": "en",
+      "snippet": "The waiting period under the Hart-Scott-Rodino Act expired on April 2…",
+      "round": 2,
+      "action_id": "act_05"
+    },
+    {
+      "id": "doc_11",
+      "url": "https://globalwire.example/business/helios-shareholders-approve",
+      "title": "Helios shareholders approve Northwind takeover",
+      "domain": "globalwire.example",
+      "publisher": "GlobalWire",
+      "author": null,
+      "published_at": "2024-02-20T19:02:00Z",
+      "published_at_source": "search_api",
+      "retrieved_at": "2026-11-20T08:00:22Z",
+      "provider": "tavily",
+      "origin_group_id": null,
+      "is_original": null,
+      "attribution": null,
+      "available_at_cutoff": true,
+      "language": "en",
+      "snippet": "Helios shareholders voted overwhelmingly on Tuesday to approve the takeover…",
+      "round": 2,
+      "action_id": "act_07"
+    }
+  ],
+  "origin_groups": [],
+  "evidence": [
+    {
+      "id": "ev_01",
+      "document_id": "doc_01",
+      "quote": "Northwind Robotics today announced it has entered into a definitive agreement to acquire Helios Sensors in an all-cash transaction valued at approximately $2.1 billion.",
+      "event_date": null,
+      "round": 1
+    },
+    {
+      "id": "ev_02",
+      "document_id": "doc_01",
+      "quote": "The transaction is expected to close in the second half of 2024, subject to regulatory approvals and approval by Helios shareholders.",
+      "event_date": null,
+      "round": 1
+    },
+    {
+      "id": "ev_03",
+      "document_id": "doc_02",
+      "quote": "Northwind Robotics has agreed to buy Helios Sensors for about $2.1 billion in cash, the company said on Monday.",
+      "event_date": null,
+      "round": 1
+    },
+    {
+      "id": "ev_04",
+      "document_id": "doc_05",
+      "quote": "In March, the European Commission opened an in-depth investigation into the deal, citing concerns about the supply of lidar components.",
+      "event_date": null,
+      "round": 1
+    },
+    {
+      "id": "ev_05",
+      "document_id": "doc_05",
+      "quote": "The review is ongoing, and a decision is not expected before June.",
+      "event_date": null,
+      "round": 1
+    },
+    {
+      "id": "ev_06",
+      "document_id": "doc_06",
+      "quote": "Northwind has completed its purchase of Helios Sensors after clearing its final regulatory hurdle in the United States.",
+      "event_date": null,
+      "round": 1
+    },
+    {
+      "id": "ev_08",
+      "document_id": "doc_08",
+      "quote": "The European Commission has opened an in-depth investigation to assess the proposed acquisition of Helios Sensors by Northwind Robotics.",
+      "event_date": null,
+      "round": 2
+    },
+    {
+      "id": "ev_10",
+      "document_id": "doc_10",
+      "quote": "The waiting period under the Hart-Scott-Rodino Act expired on April 2, clearing the deal in the United States. The European Commission's review remains pending.",
+      "event_date": null,
+      "round": 2
+    },
+    {
+      "id": "ev_11",
+      "document_id": "doc_11",
+      "quote": "Helios shareholders voted overwhelmingly on Tuesday to approve the takeover by Northwind Robotics.",
+      "event_date": null,
+      "round": 2
+    }
+  ],
+  "claims": [
+    {
+      "id": "cl_01",
+      "text": "Northwind agreed to acquire Helios Sensors for about $2.1 billion in cash.",
+      "subject": "Northwind Robotics",
+      "stage": null,
+      "event_date": null,
+      "question_ids": [
+        "q_3"
+      ],
+      "verdict": "supported",
+      "rationale": "Stated in the original press release and repeated by republications.",
+      "links": [
+        {
+          "evidence_id": "ev_01",
+          "relation": "supports",
+          "note": null
+        },
+        {
+          "evidence_id": "ev_03",
+          "relation": "supports",
+          "note": null
+        }
+      ],
+      "independent_sources": 2,
+      "applicable_at_cutoff": true,
+      "history": [],
+      "first_round": 1,
+      "updated_round": 1
+    },
+    {
+      "id": "cl_02",
+      "text": "Closing was expected in the second half of 2024, subject to regulatory and shareholder approval.",
+      "subject": "Northwind Robotics",
+      "stage": null,
+      "event_date": null,
+      "question_ids": [
+        "q_1"
+      ],
+      "verdict": "supported",
+      "rationale": "Explicit in the press release.",
+      "links": [
+        {
+          "evidence_id": "ev_02",
+          "relation": "supports",
+          "note": null
+        }
+      ],
+      "independent_sources": 1,
+      "applicable_at_cutoff": true,
+      "history": [],
+      "first_round": 1,
+      "updated_round": 1
+    },
+    {
+      "id": "cl_03",
+      "text": "The European Commission opened an in-depth investigation into the deal.",
+      "subject": "Northwind Robotics",
+      "stage": null,
+      "event_date": null,
+      "question_ids": [
+        "q_2"
+      ],
+      "verdict": "supported",
+      "rationale": "Confirmed by the Commission notice dated March 18, 2024.",
+      "links": [
+        {
+          "evidence_id": "ev_08",
+          "relation": "supports",
+          "note": null
+        },
+        {
+          "evidence_id": "ev_04",
+          "relation": "supports",
+          "note": null
+        }
+      ],
+      "independent_sources": 2,
+      "applicable_at_cutoff": true,
+      "history": [],
+      "first_round": 1,
+      "updated_round": 2
+    },
+    {
+      "id": "cl_04",
+      "text": "Northwind completed the acquisition in April 2024.",
+      "subject": "Northwind Robotics",
+      "stage": null,
+      "event_date": null,
+      "question_ids": [
+        "q_1"
+      ],
+      "verdict": "contradicted",
+      "rationale": "Traced to the US HSR waiting-period expiry on April 2, which is a US clearance, not closing; the EU review was still pending in May. TechLedger conflated two stages — a reporting error, not a historical change.",
+      "links": [
+        {
+          "evidence_id": "ev_06",
+          "relation": "context",
+          "note": "Conflates US clearance with closing"
+        },
+        {
+          "evidence_id": "ev_10",
+          "relation": "contradicts",
+          "note": null
+        },
+        {
+          "evidence_id": "ev_05",
+          "relation": "contradicts",
+          "note": null
+        }
+      ],
+      "independent_sources": 0,
+      "applicable_at_cutoff": true,
+      "history": [
+        {
+          "verdict": "conflicting",
+          "reason": "Original source shows only US clearance.",
+          "round": 1,
+          "at": "2026-11-20T08:00:26Z"
+        }
+      ],
+      "first_round": 1,
+      "updated_round": 2
+    },
+    {
+      "id": "cl_05",
+      "text": "The US HSR waiting period expired on April 2, 2024, clearing the deal in the United States.",
+      "subject": "Northwind Robotics",
+      "stage": null,
+      "event_date": null,
+      "question_ids": [
+        "q_2"
+      ],
+      "verdict": "supported",
+      "rationale": "AntitrustWatch, citing FTC notices.",
+      "links": [
+        {
+          "evidence_id": "ev_10",
+          "relation": "supports",
+          "note": null
+        }
+      ],
+      "independent_sources": 1,
+      "applicable_at_cutoff": true,
+      "history": [],
+      "first_round": 2,
+      "updated_round": 2
+    },
+    {
+      "id": "cl_06",
+      "text": "Helios shareholders approved the takeover on February 20, 2024.",
+      "subject": "Northwind Robotics",
+      "stage": null,
+      "event_date": null,
+      "question_ids": [
+        "q_2"
+      ],
+      "verdict": "supported",
+      "rationale": "GlobalWire report of the vote.",
+      "links": [
+        {
+          "evidence_id": "ev_11",
+          "relation": "supports",
+          "note": null
+        }
+      ],
+      "independent_sources": 1,
+      "applicable_at_cutoff": true,
+      "history": [],
+      "first_round": 2,
+      "updated_round": 2
+    }
+  ],
+  "timeline": [
+    {
+      "id": "tl_01",
+      "date": {
+        "start": "2024-01-15",
+        "end": "2024-01-15",
+        "precision": "day",
+        "text": null
+      },
+      "title": "Deal announced",
+      "summary": "Definitive agreement to acquire Helios for ~$2.1B in cash; closing expected H2 2024.",
+      "stage": null,
+      "claim_ids": [
+        "cl_01",
+        "cl_02"
+      ],
+      "verdict": "supported",
+      "is_milestone": true
+    },
+    {
+      "id": "tl_03",
+      "date": {
+        "start": "2024-02-20",
+        "end": "2024-02-20",
+        "precision": "day",
+        "text": null
+      },
+      "title": "Shareholders approve",
+      "summary": "Helios shareholders approve the takeover.",
+      "stage": null,
+      "claim_ids": [
+        "cl_06"
+      ],
+      "verdict": "supported",
+      "is_milestone": true
+    },
+    {
+      "id": "tl_02",
+      "date": {
+        "start": "2024-03-18",
+        "end": "2024-03-18",
+        "precision": "day",
+        "text": null
+      },
+      "title": "EU in-depth investigation",
+      "summary": "The European Commission opens a Phase II review over lidar supply concerns.",
+      "stage": null,
+      "claim_ids": [
+        "cl_03"
+      ],
+      "verdict": "supported",
+      "is_milestone": true
+    },
+    {
+      "id": "tl_04",
+      "date": {
+        "start": "2024-04-02",
+        "end": "2024-04-02",
+        "precision": "day",
+        "text": null
+      },
+      "title": "US clearance",
+      "summary": "HSR waiting period expires; the EU review remains pending.",
+      "stage": null,
+      "claim_ids": [
+        "cl_05"
+      ],
+      "verdict": "supported",
+      "is_milestone": true
+    }
+  ],
+  "gaps": [
+    {
+      "id": "gap_05",
+      "type": "unanswered_question",
+      "description": "No evidence yet on the outcome of the EU review.",
+      "question_ids": [
+        "q_2",
+        "q_1"
+      ],
+      "claim_ids": [],
+      "priority": "high",
+      "affects_main_answer": true,
+      "feasible": true,
+      "opened_round": 1,
+      "status": "open",
+      "closed_round": null,
+      "resolution": null
+    }
+  ],
+  "decisions": [
+    {
+      "id": "dec_1",
+      "kind": "continue_research",
+      "round": 1,
+      "reason": "Core coverage 0/2 with 3 open high-priority gaps; 63% of research budget remains.",
+      "stop_reason": null,
+      "signals": {
+        "core_coverage": 0,
+        "open_high_gaps": 3,
+        "new_independent_evidence": 6,
+        "new_milestones": 2,
+        "budget_remaining_ratio": 0.63,
+        "no_progress_rounds": 0
+      },
+      "at": "2026-11-20T08:00:15Z"
+    },
+    {
+      "id": "dec_2",
+      "kind": "write_report",
+      "round": 2,
+      "reason": "Research budget nearly exhausted (6% left after reserve); writing with the evidence collected so far.",
+      "stop_reason": "budget_exhausted",
+      "signals": {
+        "core_coverage": 0,
+        "open_high_gaps": 1,
+        "new_independent_evidence": 4,
+        "new_milestones": 3,
+        "budget_remaining_ratio": 0.06,
+        "no_progress_rounds": 0
+      },
+      "at": "2026-11-20T08:00:27Z"
+    },
+    {
+      "id": "dec_9",
+      "kind": "finish",
+      "round": 1,
+      "reason": "Review found an unresolved omission, but review rounds (1/1) and budget are exhausted. Delivering a partial report.",
+      "stop_reason": "review_unresolved",
+      "signals": {
+        "core_coverage": 0,
+        "open_high_gaps": 1,
+        "new_independent_evidence": 0,
+        "new_milestones": 0,
+        "budget_remaining_ratio": 0.02,
+        "no_progress_rounds": 0
+      },
+      "at": "2026-11-20T08:00:32Z"
+    }
+  ],
+  "report": {
+    "version": 1,
+    "language": "en",
+    "title": "Northwind Robotics' acquisition of Helios Sensors: status as of June 30, 2024",
+    "generated_at": "2026-11-20T08:00:32Z",
+    "is_partial": true,
+    "answer": {
+      "id": "p_1",
+      "sentences": [
+        {
+          "id": "s_1_1",
+          "text": "As of June 30, 2024, the evidence collected shows the acquisition had been announced and cleared in the United States, but it does not establish whether the EU review had concluded.",
+          "evidence_ids": [
+            "ev_01",
+            "ev_10"
+          ],
+          "claim_ids": [
+            "cl_01",
+            "cl_05"
+          ]
+        },
+        {
+          "id": "s_1_2",
+          "text": "An April report that the deal had closed is contradicted by the original sources.",
+          "evidence_ids": [
+            "ev_10",
+            "ev_05"
+          ],
+          "claim_ids": [
+            "cl_04"
+          ]
+        }
+      ]
+    },
+    "sections": [
+      {
+        "id": "sec_bg",
+        "kind": "background",
+        "title": "Background",
+        "paragraphs": [
+          {
+            "id": "p_2",
+            "sentences": [
+              {
+                "id": "s_2_1",
+                "text": "On January 15, 2024, Northwind announced a definitive agreement to acquire Helios for about $2.1 billion in cash.",
+                "evidence_ids": [
+                  "ev_01"
+                ],
+                "claim_ids": [
+                  "cl_01"
+                ]
+              },
+              {
+                "id": "s_2_2",
+                "text": "The company expected the transaction to close in the second half of 2024, subject to regulatory and shareholder approval.",
+                "evidence_ids": [
+                  "ev_02"
+                ],
+                "claim_ids": [
+                  "cl_02"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "sec_tl",
+        "kind": "timeline_analysis",
+        "title": "Approval timeline",
+        "paragraphs": [
+          {
+            "id": "p_3",
+            "sentences": [
+              {
+                "id": "s_3_1",
+                "text": "Helios shareholders approved the takeover on February 20.",
+                "evidence_ids": [
+                  "ev_11"
+                ],
+                "claim_ids": [
+                  "cl_06"
+                ]
+              },
+              {
+                "id": "s_3_2",
+                "text": "On March 18, the European Commission opened an in-depth investigation, citing concerns about the supply of lidar components.",
+                "evidence_ids": [
+                  "ev_08",
+                  "ev_04"
+                ],
+                "claim_ids": [
+                  "cl_03"
+                ]
+              },
+              {
+                "id": "s_3_3",
+                "text": "In the United States, the HSR waiting period expired on April 2.",
+                "evidence_ids": [
+                  "ev_10"
+                ],
+                "claim_ids": [
+                  "cl_05"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "sec_an",
+        "kind": "analysis",
+        "title": "Assessing the conflicting report",
+        "paragraphs": [
+          {
+            "id": "p_4",
+            "sentences": [
+              {
+                "id": "s_4_1",
+                "text": "The April 5 report of completion appears to have conflated US clearance with closing: the US event it describes matches the HSR expiry, while the EU review was still pending in May.",
+                "evidence_ids": [
+                  "ev_06",
+                  "ev_10",
+                  "ev_05"
+                ],
+                "claim_ids": [
+                  "cl_04"
+                ]
+              },
+              {
+                "id": "s_4_2",
+                "text": "The four January articles republish the same press release, so they count as one independent source.",
+                "evidence_ids": [
+                  "ev_01",
+                  "ev_03"
+                ],
+                "claim_ids": [
+                  "cl_01"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "sec_unc",
+        "kind": "uncertainty",
+        "title": "Uncertainty and limits",
+        "paragraphs": [
+          {
+            "id": "p_5",
+            "sentences": [
+              {
+                "id": "s_5_1",
+                "text": "The research budget ran out before the outcome of the EU review could be established; no source in the collected evidence reports a decision.",
+                "evidence_ids": [],
+                "claim_ids": []
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "open_questions": [
+      "Outcome of the European Commission review",
+      "Whether all approvals were in hand by the cutoff"
+    ],
+    "stop_reason": "budget_exhausted"
+  },
+  "reviews": [
+    {
+      "round": 1,
+      "passed": false,
+      "findings": [
+        {
+          "id": "rf_1",
+          "type": "omission",
+          "severity": "high",
+          "sentence_id": null,
+          "description": "Core question q_2 (EU outcome) is not answered.",
+          "status": "open"
+        },
+        {
+          "id": "rf_2",
+          "type": "omission",
+          "severity": "low",
+          "sentence_id": "s_1_2",
+          "description": "The answer does not mention the shareholder approval date.",
+          "status": "open"
+        }
+      ],
+      "at": "2026-11-20T08:00:32Z"
+    }
+  ],
+  "error": null,
+  "last_event_seq": 147
+}

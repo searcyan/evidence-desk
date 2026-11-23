@@ -1,0 +1,26 @@
+You will be provided with a reference and some statements. Please determine whether each statement is 'supported', 'unsupported', or 'unknown' with respect to the reference. Please note:
+First, assess whether the reference contains any valid content. If the reference contains no valid information, such as a 'page not found' message, then all statements should be considered 'unknown'.
+If the reference is valid, for a given statement: if the facts or data it contains can be found entirely or partially within the reference, it is considered 'supported' (data accepts rounding); if all facts and data in the statement cannot be found in the reference, it is considered 'unsupported'.
+
+You should return the result in a JSON list format, where each item in the list contains the statement's index and the judgment result, for example:
+[
+    {{
+        "idx": 1,
+        "result": "supported"
+    }},
+    {{
+        "idx": 2,
+        "result": "unsupported"
+    }}
+]
+
+Below are the reference and statements:
+<reference>
+{reference}
+</reference>
+
+<statements>
+{statements}
+</statements>
+
+Begin the assessment now. Output only the JSON list, without any conversational text or explanations.

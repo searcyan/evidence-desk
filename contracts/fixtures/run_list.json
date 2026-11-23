@@ -1,0 +1,167 @@
+{
+  "items": [
+    {
+      "id": "run_demo01",
+      "title": "Northwind Robotics' acquisition of Helios Sensors",
+      "status": "completed",
+      "phase": null,
+      "request": {
+        "question": "Has Northwind Robotics completed its acquisition of Helios Sensors, and which approvals were still pending?",
+        "event_hint": null,
+        "cutoff": "2024-06-30T23:59:59Z",
+        "temporal_mode": "as_of",
+        "seed_url": null,
+        "report_language": "en",
+        "budget_preset": "medium",
+        "budget": null,
+        "mechanisms": {
+          "source_verification": true,
+          "temporal_planning": true
+        },
+        "search_mode": "live",
+        "snapshot_id": null,
+        "model_profile": null,
+        "tags": []
+      },
+      "budget": {
+        "max_research_rounds": 5,
+        "max_review_rounds": 2,
+        "max_tool_calls": 60,
+        "max_llm_tokens": 800000,
+        "max_seconds": 600,
+        "max_cost_usd": 0.8,
+        "reserve_ratio": 0.25
+      },
+      "usage": {
+        "research_rounds": 3,
+        "review_rounds": 2,
+        "search_calls": 10,
+        "read_calls": 14,
+        "llm_calls": 25,
+        "input_tokens": 205200,
+        "output_tokens": 31000,
+        "cost_usd": 0.0895,
+        "elapsed_seconds": 47
+      },
+      "created_at": "2026-11-20T08:00:00Z",
+      "started_at": "2026-11-20T08:00:00Z",
+      "finished_at": "2026-11-20T08:00:47Z",
+      "stop_reason": "review_passed",
+      "counts": {
+        "documents": 14,
+        "claims": 10,
+        "timeline_entries": 7,
+        "open_gaps": 0
+      }
+    },
+    {
+      "id": "run_demo02",
+      "title": "Northwind Robotics' acquisition of Helios Sensors",
+      "status": "partial",
+      "phase": null,
+      "request": {
+        "question": "Has Northwind Robotics completed its acquisition of Helios Sensors, and which approvals were still pending?",
+        "event_hint": null,
+        "cutoff": "2024-06-30T23:59:59Z",
+        "temporal_mode": "as_of",
+        "seed_url": null,
+        "report_language": "en",
+        "budget_preset": "small",
+        "budget": null,
+        "mechanisms": {
+          "source_verification": false,
+          "temporal_planning": false
+        },
+        "search_mode": "live",
+        "snapshot_id": null,
+        "model_profile": null,
+        "tags": []
+      },
+      "budget": {
+        "max_research_rounds": 3,
+        "max_review_rounds": 1,
+        "max_tool_calls": 30,
+        "max_llm_tokens": 300000,
+        "max_seconds": 300,
+        "max_cost_usd": 0.3,
+        "reserve_ratio": 0.25
+      },
+      "usage": {
+        "research_rounds": 2,
+        "review_rounds": 1,
+        "search_calls": 7,
+        "read_calls": 10,
+        "llm_calls": 17,
+        "input_tokens": 134100,
+        "output_tokens": 20600,
+        "cost_usd": 0.0589,
+        "elapsed_seconds": 32
+      },
+      "created_at": "2026-11-20T08:00:00Z",
+      "started_at": "2026-11-20T08:00:00Z",
+      "finished_at": "2026-11-20T08:00:32Z",
+      "stop_reason": "budget_exhausted",
+      "counts": {
+        "documents": 10,
+        "claims": 6,
+        "timeline_entries": 4,
+        "open_gaps": 1
+      }
+    },
+    {
+      "id": "run_demo03",
+      "title": "Northwind Robotics' acquisition of Helios Sensors",
+      "status": "failed",
+      "phase": null,
+      "request": {
+        "question": "Has Northwind Robotics completed its acquisition of Helios Sensors, and which approvals were still pending?",
+        "event_hint": null,
+        "cutoff": "2024-06-30T23:59:59Z",
+        "temporal_mode": "as_of",
+        "seed_url": null,
+        "report_language": "en",
+        "budget_preset": "medium",
+        "budget": null,
+        "mechanisms": {
+          "source_verification": true,
+          "temporal_planning": true
+        },
+        "search_mode": "live",
+        "snapshot_id": null,
+        "model_profile": null,
+        "tags": []
+      },
+      "budget": {
+        "max_research_rounds": 5,
+        "max_review_rounds": 2,
+        "max_tool_calls": 60,
+        "max_llm_tokens": 800000,
+        "max_seconds": 600,
+        "max_cost_usd": 0.8,
+        "reserve_ratio": 0.25
+      },
+      "usage": {
+        "research_rounds": 1,
+        "review_rounds": 0,
+        "search_calls": 2,
+        "read_calls": 4,
+        "llm_calls": 3,
+        "input_tokens": 24800,
+        "output_tokens": 3600,
+        "cost_usd": 0.0107,
+        "elapsed_seconds": 7
+      },
+      "created_at": "2026-11-20T08:00:00Z",
+      "started_at": "2026-11-20T08:00:00Z",
+      "finished_at": "2026-11-20T08:00:07Z",
+      "stop_reason": "error",
+      "counts": {
+        "documents": 4,
+        "claims": 0,
+        "timeline_entries": 0,
+        "open_gaps": 0
+      }
+    }
+  ],
+  "next_cursor": null
+}

@@ -1,0 +1,21 @@
+{
+  "status": "ok",
+  "checks": {
+    "database": {
+      "ok": true,
+      "detail": null
+    },
+    "llm": {
+      "ok": true,
+      "detail": null
+    },
+    "tavily": {
+      "ok": true,
+      "detail": null
+    },
+    "exa": {
+      "ok": false,
+      "detail": "EXA_API_KEY not set"
+    }
+  }
+}

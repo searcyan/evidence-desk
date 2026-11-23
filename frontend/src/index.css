@@ -1,0 +1,222 @@
+@import 'tailwindcss';
+
+/* 主题通过 <html data-theme="light|dark"> 切换（ThemeProvider 负责同步系统设置） */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+:root {
+  color-scheme: light;
+  --bg: #f4f3ef;
+  --surface: #fcfcfb;
+  --surface-2: #f3f2ee;
+  --surface-3: #e9e8e3;
+  --ink: #0b0b0b;
+  --ink-2: #52514e;
+  --ink-3: #7d7b75;
+  --line: #e1e0d9;
+  --line-strong: #c3c2b7;
+  --accent: #1c5cab;
+  --accent-hover: #184f95;
+  --accent-ink: #ffffff;
+  --accent-soft: #e4eefb;
+  --accent-text: #1c5cab;
+  --focus: #3987e5;
+
+  /* 状态色：只用于证据状态与运行状态，始终搭配图标与文字 */
+  --good: #0ca30c;
+  --good-text: #006300;
+  --good-soft: #e3f3e3;
+  --warn: #fab219;
+  --warn-text: #7a5000;
+  --warn-soft: #fdf2d8;
+  --serious: #ec835a;
+  --serious-text: #a03c14;
+  --serious-soft: #fce9e1;
+  --critical: #d03b3b;
+  --critical-text: #b02a2a;
+  --critical-soft: #fbe5e5;
+  --neutral-soft: #eceae4;
+
+  /* 实验条件（已用 dataviz 校验器验证，base 为中性灰作基线） */
+  --cond-base: #898781;
+  --cond-source: #2a78d6;
+  --cond-temporal: #eb6834;
+  --cond-full: #1baf7a;
+
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+  --shadow: 0 1px 2px rgba(11, 11, 11, 0.04), 0 4px 16px rgba(11, 11, 11, 0.05);
+  --shadow-lg: 0 8px 40px rgba(11, 11, 11, 0.16);
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0d0d0d;
+  --surface: #1a1a19;
+  --surface-2: #212120;
+  --surface-3: #2c2c2a;
+  --ink: #f0efec;
+  --ink-2: #c3c2b7;
+  --ink-3: #8f8d86;
+  --line: #2c2c2a;
+  --line-strong: #3d3d3a;
+  --accent: #3987e5;
+  --accent-hover: #5598e7;
+  --accent-ink: #ffffff;
+  --accent-soft: #16263b;
+  --accent-text: #86b6ef;
+  --focus: #5598e7;
+
+  --good: #0ca30c;
+  --good-text: #4cc44c;
+  --good-soft: #142614;
+  --warn: #fab219;
+  --warn-text: #fab219;
+  --warn-soft: #2e2510;
+  --serious: #ec835a;
+  --serious-text: #f09a77;
+  --serious-soft: #321d14;
+  --critical: #d03b3b;
+  --critical-text: #ef7676;
+  --critical-soft: #331616;
+  --neutral-soft: #2a2a28;
+
+  --cond-base: #898781;
+  --cond-source: #3987e5;
+  --cond-temporal: #d95926;
+  --cond-full: #199e70;
+
+  --grid: #2c2c2a;
+  --axis: #383835;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.6);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-text: var(--accent-text);
+  --color-good: var(--good);
+  --color-good-text: var(--good-text);
+  --color-good-soft: var(--good-soft);
+  --color-warn: var(--warn);
+  --color-warn-text: var(--warn-text);
+  --color-warn-soft: var(--warn-soft);
+  --color-serious: var(--serious);
+  --color-serious-text: var(--serious-text);
+  --color-serious-soft: var(--serious-soft);
+  --color-critical: var(--critical);
+  --color-critical-text: var(--critical-text);
+  --color-critical-soft: var(--critical-soft);
+  --color-neutral-soft: var(--neutral-soft);
+  --font-sans: system-ui, -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Code', 'SF Mono', Consolas, monospace;
+  --shadow-card: var(--shadow);
+  --shadow-pop: var(--shadow-lg);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 放进 base 层：未分层样式优先级高于 Tailwind 工具类，否则组件上的 outline-none 会失效，
+   导致自带聚焦样式的输入框外再多出一圈方形描边 */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+}
+
+::selection {
+  background: var(--accent-soft);
+}
+
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* 细滚动条 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+
+/* 实时进行中的脉冲点 */
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+.animate-pulse-dot {
+  animation: pulse-dot 1.4s ease-in-out infinite;
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.animate-slide-in {
+  animation: slide-in 0.25s ease-out;
+}
+
+@keyframes drawer-in {
+  from {
+    opacity: 0.6;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.animate-drawer-in {
+  animation: drawer-in 0.2s ease-out;
+}
+
+/* 报告正文中被选中的证据句 */
+.sentence-hl {
+  background: var(--accent-soft);
+  border-radius: 3px;
+  box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
